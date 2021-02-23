@@ -1,0 +1,26 @@
+From 8c6eb684734e7dd5b1b457c2e09174e660bcc670 Mon Sep 17 00:00:00 2001
+From: handsomeyingyan <handsomeyingyan@github.com>
+Date: Sat, 6 Feb 2021 20:06:54 +0800
+Subject: [PATCH] sunxi cedarx support v2
+
+---
+ omx/gstomxvideo.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/omx/gstomxvideo.c b/omx/gstomxvideo.c
+index 9feda19..333ede3 100644
+--- a/omx/gstomxvideo.c
++++ b/omx/gstomxvideo.c
+@@ -54,6 +54,9 @@ gst_omx_video_get_format_from_omx (OMX_COLOR_FORMATTYPE omx_colorformat)
+     case OMX_COLOR_FormatYUV422SemiPlanar:
+       format = GST_VIDEO_FORMAT_NV16;
+       break;
++    case OMX_COLOR_FormatYVU420Planar:
++      format = GST_VIDEO_FORMAT_YV12;
++      break;
+     case OMX_COLOR_FormatYCbYCr:
+       format = GST_VIDEO_FORMAT_YUY2;
+       break;
+-- 
+2.30.0
+

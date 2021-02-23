@@ -1,0 +1,42 @@
+From 1000d551ea5baea40d307de52c5ae896f71cfd93 Mon Sep 17 00:00:00 2001
+From: handsomeyingyan <handsomeyingyan@github.com>
+Date: Tue, 16 Feb 2021 10:57:00 +0800
+Subject: [PATCH] fix wayland scanner
+
+---
+ meson_options.txt    | 6 ++++++
+ protocol/meson.build | 6 ++++--
+ 2 files changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/meson_options.txt b/meson_options.txt
+index c862ecc..ae23c9e 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -210,3 +210,9 @@ option(
+ 	value: false,
+ 	description: 'Generate documentation'
+ )
++option(
++	'wayland-scanner-path',
++	type : 'string',
++	value : '',
++	description : 'Locations to wayland-scanner binary. Default: use path from pkg-config'
++)
+diff --git a/protocol/meson.build b/protocol/meson.build
+index 25cea5a..0138197 100644
+--- a/protocol/meson.build
++++ b/protocol/meson.build
+@@ -1,6 +1,8 @@
+ dep_scanner = dependency('wayland-scanner', native: true)
+-prog_scanner = find_program(dep_scanner.get_pkgconfig_variable('wayland_scanner'))
+-
++prog_scanner = get_option('wayland-scanner-path')
++if prog_scanner == ''
++    prog_scanner = find_program(dep_scanner.get_pkgconfig_variable('wayland_scanner'))
++endif
+ dep_wp = dependency('wayland-protocols', version: '>= 1.18')
+ dir_wp_base = dep_wp.get_pkgconfig_variable('pkgdatadir')
+ 
+-- 
+2.30.1
+

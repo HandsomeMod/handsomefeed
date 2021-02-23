@@ -1,0 +1,24 @@
+From a59f55381900a3aec2b9202a4b04c15ff0e76f2b Mon Sep 17 00:00:00 2001
+From: handsomeyingyan <handsomeyingyan@github.com>
+Date: Mon, 15 Feb 2021 11:27:23 +0800
+Subject: [PATCH] fix cross-combineing
+
+---
+ wayland-protocols.pc.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/wayland-protocols.pc.in b/wayland-protocols.pc.in
+index 379be06..4e0e0a6 100644
+--- a/wayland-protocols.pc.in
++++ b/wayland-protocols.pc.in
+@@ -1,6 +1,6 @@
+ prefix=@prefix@
+ datarootdir=@datarootdir@
+-pkgdatadir=${pc_sysrootdir}@datadir@/@PACKAGE@
++pkgdatadir=@datarootdir@/@PACKAGE@
+ 
+ Name: Wayland Protocols
+ Description: Wayland protocol files
+-- 
+2.30.1
+

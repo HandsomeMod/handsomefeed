@@ -1,0 +1,47 @@
+From e68a38ac4ced3deaf2a78800dd26adbc145cceae Mon Sep 17 00:00:00 2001
+From: handsomeyingyan <handsomeyingyan@github.com>
+Date: Sat, 6 Feb 2021 20:05:04 +0800
+Subject: [PATCH] sunxi cedarx support
+
+---
+ config/bellagio/gstomx.conf | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/config/bellagio/gstomx.conf b/config/bellagio/gstomx.conf
+index 0e856be..3d311ab 100644
+--- a/config/bellagio/gstomx.conf
++++ b/config/bellagio/gstomx.conf
+@@ -9,12 +9,12 @@ hacks=event-port-settings-changed-ndata-parameter-swap;event-port-settings-chang
+ 
+ [omxh264dec]
+ type-name=GstOMXH264Dec
+-core-name=/usr/local/lib/libomxil-bellagio.so.0
+-component-name=OMX.st.video_decoder.avc
++core-name=/usr/lib/libOmxCore.so
++component-name=OMX.allwinner.video.decoder.avc
+ rank=257
+ in-port-index=0
+ out-port-index=1
+-hacks=event-port-settings-changed-ndata-parameter-swap;event-port-settings-changed-port-0-to-1
++hacks=no-component-role;no-disable-outport
+ 
+ [omxmpeg4videoenc]
+ type-name=GstOMXMPEG4VideoEnc
+@@ -45,11 +45,12 @@ hacks=event-port-settings-changed-ndata-parameter-swap;no-component-role;no-disa
+ 
+ [omxh264dec]
+ type-name=GstOMXH264Dec
+-core-name=/usr/lib/libomxil-bellagio.so.0
+-component-name=OMX.mesa.video_decoder.avc
++core-name=/usr/lib/libOmxCore.so
++component-name=OMX.allwinner.video.decoder.avc
+ rank=0
+ in-port-index=0
+ out-port-index=1
++hacks=no-component-role;no-disable-outport
+ 
+ [omxmpeg2dec]
+ type-name=GstOMXMPEG2VideoDec
+-- 
+2.30.0
+
