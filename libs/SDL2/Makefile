@@ -21,6 +21,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=Multimedia
   TITLE:=Simple DirectMedia Layer
   URL:=https://libsdl.org/
+  DEPENDS:=+alsa-lib +directfb +tslib
 endef
 
 define Package/$(PKG_NAME)/decription
@@ -36,7 +37,13 @@ CONFIGURE_ARGS += \
 		--disable-esd \
 		--enable-video-directfb \
 		--disable-video-wayland \
-		--disable-input-tslib #disable tslib for now
+		--disable-video-opengl \
+		--disable-video-x11 \
+		--enable-alsa \
+		--without-x \
+		--disable-video-opengles \
+		--disable-video-kmsdrm \
+		--enable-input-tslib #disable tslib for now
  
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include

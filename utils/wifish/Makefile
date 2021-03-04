@@ -40,7 +40,13 @@ endef
 
 define Package/$(PKG_NAME)/install 
 	$(INSTALL_DIR) $(1)/usr/bin/
+	$(INSTALL_DIR) $(1)/usr/local/share/wifish/
+	$(INSTALL_DIR) $(1)/etc/sv/wpa_supplicant
+	
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/wifish $(1)/usr/bin/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/awk/*.awk $(1)/usr/local/share/wifish/
+	$(CP) $(PKG_BUILD_DIR)/sv/wpa_supplicant/* $(1)/etc/sv/wpa_supplicant/
+	
 endef 
 
 $(eval $(call BuildPackage,$(PKG_NAME)))

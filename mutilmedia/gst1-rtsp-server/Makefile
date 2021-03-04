@@ -8,7 +8,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gst1-rtsp-server
-PKG_VERSION:=1.16.0
+PKG_VERSION:=1.18.3
 PKG_RELEASE:=1
 
 PKG_MAINTAINER:=HandsomeYingyan <handsomeyingyan@gmail.com>
@@ -19,12 +19,13 @@ PKG_LICENSE_FILES:=COPYING
 PKG_BUILD_DIR:=$(BUILD_DIR)/gst-rtsp-server-$(PKG_VERSION)
 PKG_SOURCE:=gst-rtsp-server-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=http://gstreamer.freedesktop.org/src/gst-rtsp-server/
-PKG_HASH:=198e9eec1a3e32dc810d3fbf3a714850a22c6288d4a5c8e802c5ff984af03f19
+PKG_HASH:=4f7757293b3d73dc49768b7392791668c4d0c21d41824624ffbd75c7f9ee0168
 
 PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
+include $(TOPDIR)/feeds/packages/devel/meson/meson.mk
 
 
 
@@ -33,7 +34,7 @@ define Package/$(PKG_NAME)
   SECTION:=multimedia
   TITLE:=GStreamer1 RTSP server
   URL:=http://gstreamer.freedesktop.org/
-  DEPENDS:= +libgstreamer1 $(ICONV_DEPENDS) +gstreamer1-plugins-base
+  DEPENDS:= +libgstreamer1 $(ICONV_DEPENDS) +gstreamer1-plugins-base +libgst1sdp +libgst1app +libgst1net +libgst1rtp +libgst1rtsp
 endef
 
 define Package/$(PKG_NAME)-examples
@@ -57,20 +58,24 @@ $(call Package/$(PKG_NAME)/description)
 endef
 
 
-CONFIGURE_ARGS += \
-	--disable-fatal-warnings
+MESON_ARGS += \
+	-Dexamples=disabled \
+	-Dtests=disabled \
+	-Dgobject-cast-checks=disabled \
+	-Dglib-asserts=disabled \
+	-Dglib-checks=disabled
+	
 
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/*.{la,so*} $(1)/usr/lib/
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/*.so* $(1)/usr/lib/
 	$(INSTALL_DIR) $(1)/usr/lib/gstreamer-1.0/
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/gstreamer-1.0/*.{la,so*} $(1)/usr/lib/gstreamer-1.0
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/gstreamer-1.0/*.so* $(1)/usr/lib/gstreamer-1.0
 	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
 	$(CP) -a $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/* $(1)/usr/lib/pkgconfig/
-	
 	$(INSTALL_DIR) $(1)/usr/include
-	$(CP) -a $(PKG_INSTALL_DIR)/usr/include/* $(1)/usr/lib/include/
+	$(CP) -a $(PKG_INSTALL_DIR)/usr/include/* $(1)/usr/include
 endef
 
 

@@ -8,49 +8,51 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gst-omx
-PKG_VERSION:=1.16.0
+PKG_VERSION:=1.18.3
 PKG_RELEASE:=1
 PKG_SOURCE_URL:=https://gstreamer.freedesktop.org/src/gst-omx
-PKG_HASH:= fef77cddc02784608451c46b9def880b63230a246decf8900f2da2ed54a8af4a
+PKG_HASH:= ed0f26504e9a60e15055134410f156e40952336410f2a59bdbbda45e61e8b93f
 PKG_SOURCE_SUBDIR:=gst-omx-$(PKG_VERSION)
 PKG_SOURCE:=gst-omx-$(PKG_VERSION).tar.xz
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_SOURCE_SUBDIR)
 
 include $(INCLUDE_DIR)/package.mk
+include $(TOPDIR)/feeds/packages/devel/meson/meson.mk
 
 define Package/gst-omx
 	SECTION:=multimedia
 	CATEGORY:=Multimedia
 	TITLE:=gst openmax lib
-	DEPENDS:=+gstreamer1 +gstreamer1-plugins-base +libgst1video +libgst1allocators +libgst1audio +libgst1pbutils +libcedarx +libopenmax
+	DEPENDS:=+gstreamer1 +gstreamer1-plugins-base +libgst1video +libgst1allocators +libgst1audio +libgst1pbutils +libcedarx
 endef
 
 define Package/gst-omx/description
  GStreamer openmax API 
 endef
 
+MESON_ARGS += \
+	-Dheader_path="$(STAGING_DIR)/usr/include/"
+	-Dexamples=disabled \
+	-Dtests=disabled \
+	-Dtools=disabled \
+	-Ddoc=disabled
+
 ifeq ($(CONFIG_TARGET_brcm27xx),y)
 	PLATFORM:=rpi
-	MESON_ARGS += --with-omx-target=rpi
+	MESON_ARGS += -Dtarget=rpi
 	TARGET_CFLAGS +=  \
 		-I$(STAGING_DIR)/usr/include/IL \
 		-I$(STAGING_DIR)/usr/include/interface/vcos/pthreads \
 		-I$(STAGING_DIR)/usr/include/interface/vmcs_host/linux"
 else
 	PLATFORM:=bellagio
-	CONFIGURE_ARGS +=  --with-omx-target=bellagio
+	MESON_ARGS += -Dtarget=bellagio
 	TARGET_CFLAGS += \
 		-DOMX_VERSION_MAJOR=1 \
 		-DOMX_VERSION_MINOR=1 \
 		-DOMX_VERSION_REVISION=2 \
 		-DOMX_VERSION_STEP=0
 endif
-
-define Build/Compile
-	$(call Build/Compile/Default,)
-	$(MAKE_VARS) $(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR) $(MAKE_FLAGS) all
-	$(MAKE_VARS) $(MAKE) -C $(PKG_BUILD_DIR) $(MAKE_FLAGS) DESTDIR="$(PKG_INSTALL_DIR)" install
-endef
 
 define Package/gst-omx/install
 	$(INSTALL_DIR) $(1)/usr/lib/gstreamer-1.0
