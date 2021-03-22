@@ -8,12 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ncnn
-PKG_VERSION:=20200413
+PKG_VERSION:=20210322
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/Tencent/ncnn/archive/v$(PKG_VERSION)
-PKG_HASH:=1ed523bda96cfdf5b5619c6480987b0811e3c4ef62b5d3fe2e8bdca9b8b2fc90
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://github.com/Tencent/ncnn.git
+PKG_SOURCE_VERSION:=5f00ba89d25a427e492fb4b23befa61c04220afe
 
 PKG_LICENSE:=BSD 3 Clause
 PKG_LICENSE_FILES:=LICENSE.txt

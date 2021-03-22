@@ -1,19 +1,20 @@
 #
-# Copyright (C) 2019 Lucian Cristian <lucian.cristian@gmail.com>
 # Copyright (C) 2020-2021 HandsomeMod Project
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
 #
+
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=MNN
-PKG_VERSION:=1.0.0
+PKG_VERSION:=20210322
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/alibaba/MNN/archive/v$(PKG_VERSION)
-PKG_HASH:=0eea969ea33477ed9dafc2cccea7a5c46d3ef9815c5f295a7daf1d3c1b63e326
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://github.com/alibaba/MNN.git
+PKG_SOURCE_VERSION:=5ed9ee8f8d7a392332dac65ba734f1101fc96b98
 
 PKG_LICENSE:=Apache 2.0
 
