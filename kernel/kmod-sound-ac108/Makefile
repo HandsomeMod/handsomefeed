@@ -17,7 +17,7 @@ include $(INCLUDE_DIR)/package.mk
 define KernelPackage/$(PKG_NAME)
   SUBMENU:=Sound Support
   TITLE:=Xpower AC108 Support
-  DEPENDS:=@LINUX_4_14
+  DEPENDS:=@LINUX_4_14 @BROKEN
   MAINTAINER:=HandsomeYingyan <handsomeyingyan@gmail.com>
   KCONFIG:=
   FILES:= \
