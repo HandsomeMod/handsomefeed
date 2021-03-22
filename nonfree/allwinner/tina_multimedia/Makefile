@@ -355,7 +355,7 @@ define Package/$(PKG_NAME)
 	SECTION:=utils
 	CATEGORY:=Allwinner
 	TITLE:=$(PKG_NAME)  for allwinner
-	DEPENDS:=+libpthread \
+	DEPENDS:=@TARGET_sunxi +libpthread \
 	   +libuapi \
 	   +zlib \
 	   +alsa-lib \

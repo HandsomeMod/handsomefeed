@@ -15,7 +15,7 @@ define Package/$(PKG_NAME)
   SECTION:=utils
   CATEGORY:=Allwinner
   TITLE:=use tplayer interface in tina_multimedia
-  DEPENDS:=+libcedarx \
+  DEPENDS:=@TARGET_sunxi +libcedarx \
 		+alsa-utils +libuapi
 endef
 

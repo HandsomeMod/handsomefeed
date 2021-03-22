@@ -40,7 +40,7 @@ define Package/decodertest
   SECTION:=utils
   CATEGORY:=Allwinner
   TITLE:=decode test
-  DEPENDS:= +libcedarx
+  DEPENDS:=@TARGET_sunxi +libcedarx
 endef
 
 # Uncomment portion below for Kamikaze and delete DESCRIPTION variable above

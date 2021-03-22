@@ -26,7 +26,7 @@ define Package/gst1-cedarx
 	SECTION:=multimedia
 	CATEGORY:=Multimedia
 	TITLE:=gst sunxi-cedar h264 hardware encoding plugin
-	DEPENDS:=@(arm||aarch64) +gstreamer1 +gstreamer1-plugins-base +libgst1video
+	DEPENDS:=@TARGET_sunxi @(arm||aarch64) +gstreamer1 +gstreamer1-plugins-base +libgst1video
 endef
 
 define Package/gst1-cedarx/description

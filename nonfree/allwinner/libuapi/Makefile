@@ -34,7 +34,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=Allwinner
   TITLE:=unit api for Allwinner
   MENU:=1
-  DEPENDS:=
+  DEPENDS:=@TARGET_sunxi
 endef
 
 define Package/$(PKG_NAME)/Default
