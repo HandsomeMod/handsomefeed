@@ -1,5 +1,6 @@
 #
-# Copyright (C) 2020 HandsomeMod Project
+# Copyright (C) 2020-2021 HandsomeMod Project
+#
 # This is free software, licensed under the GNU General Public License v3.
 #
 #
@@ -12,6 +13,7 @@ PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=http://github.com/handsomeyingyan/neofetch.git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_VERSION:=c2eb478242f0a3806f31014e3dde27974384f680
+PKG_MIRROR_HASH:=a29f3c5fa96b1bc2504cdcd91280f3e6be864ad6c6d60a67c03340e461cb317b
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 include $(INCLUDE_DIR)/package.mk
