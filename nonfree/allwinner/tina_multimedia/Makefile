@@ -347,11 +347,9 @@ endif
 
 ifeq ($(TARGET_BOARD_PLATFORM),$(filter $(TARGET_BOARD_PLATFORM),r16 r58 r40 r18 r6 c200s g102 r11 r7 r30 r311 r333 r331 r7s t7 r332 v306 dolphin h3 h6 mr133 r328s2 r328s3))
 
-ifeq ($(CONFIG_TARGET_sunxi),y)
 define Package/$(PKG_NAME)/config
 source "$(SOURCE)/Config.in"
 endef
-endif
 
 define Package/$(PKG_NAME)
 	SECTION:=utils

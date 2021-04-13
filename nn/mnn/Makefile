@@ -28,6 +28,7 @@ include $(INCLUDE_DIR)/cmake.mk
 define Package/$(PKG_NAME)/Default
   CATEGORY:=Neural Network
   SUBMENU:=MNN
+  DEPENDS:= @BROKEN
 endef
 
 define Package/$(PKG_NAME)/description/Default
