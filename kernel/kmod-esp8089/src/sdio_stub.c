@@ -65,7 +65,7 @@ void sif_platform_check_r1_ready(struct esp_pub *epub)
 
 
 #ifdef ESP_ACK_INTERRUPT
-extern void sdmmc_ack_interrupt(struct mmc_host *mmc);
+void sdmmc_ack_interrupt(struct mmc_host *mmc){return;}
 
 void sif_platform_ack_interrupt(struct esp_pub *epub)
 {

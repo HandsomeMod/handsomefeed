@@ -1,0 +1,62 @@
+From bdfaa4520ea32e9b7065b8dcb450166d5d634a06 Mon Sep 17 00:00:00 2001
+From: Maxine Aubrey <maxeaubrey@gmail.com>
+Date: Sun, 18 Jul 2021 13:59:10 +0200
+Subject: [PATCH] build/meson: fix when crypto libraries are built
+
+Only do so when the dependencies are found.
+
+Fixes: 243051a8a62a ('libnm/build: always compile both crypto backends if library available')
+
+https://gitlab.freedesktop.org/NetworkManager/NetworkManager/-/merge_requests/934
+---
+ src/libnm-core-impl/meson.build | 36 ++++++++++++++++++---------------
+ 1 file changed, 20 insertions(+), 16 deletions(-)
+
+diff --git a/src/libnm-core-impl/meson.build b/src/libnm-core-impl/meson.build
+index 2b76961659..f175ea3b29 100644
+--- a/src/libnm-core-impl/meson.build
++++ b/src/libnm-core-impl/meson.build
+@@ -2,23 +2,27 @@
+ 
+ libnm_core_impl_inc = include_directories('.')
+ 
+-libnm_crypto_nss = static_library(
+-  'nm-crypto-nss',
+-  sources: 'nm-crypto-nss.c',
+-  dependencies: [
+-    libnm_core_public_dep,
+-    crypto_nss_dep,
+-  ],
+-)
++if crypto_nss_dep.found()
++  libnm_crypto_nss = static_library(
++    'nm-crypto-nss',
++    sources: 'nm-crypto-nss.c',
++    dependencies: [
++      libnm_core_public_dep,
++      crypto_nss_dep,
++    ],
++  )
++endif
+ 
+-libnm_crypto_gnutls = static_library(
+-  'nm-crypto-gnutls',
+-  sources: 'nm-crypto-gnutls.c',
+-  dependencies: [
+-    libnm_core_public_dep,
+-    crypto_gnutls_dep,
+-  ],
+-)
++if crypto_gnutls_dep.found()
++  libnm_crypto_gnutls = static_library(
++    'nm-crypto-gnutls',
++    sources: 'nm-crypto-gnutls.c',
++    dependencies: [
++      libnm_core_public_dep,
++      crypto_gnutls_dep,
++    ],
++  )
++endif
+ 
+ if crypto == 'nss'
+   libnm_crypto = libnm_crypto_nss

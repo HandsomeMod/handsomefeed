@@ -8,20 +8,20 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ncnn
-PKG_VERSION:=20210322
-PKG_RELEASE:=1
+PKG_VERSION:=20210804
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/Tencent/ncnn.git
-PKG_SOURCE_VERSION:=5f00ba89d25a427e492fb4b23befa61c04220afe
-PKG_MIRROR_HASH:=6c65e506066b15cca2a7b69b7af3ef41ddc505e0cee90d30a0a81acd5c94f9bc
+PKG_SOURCE_VERSION:=169614f73244a332c03102f998f288f48a80d85d
+PKG_MIRROR_HASH:=e777b7576588d823d50a8801211f44ce7a6f785faf0743715f30ef22a0cb1dcb
 
 PKG_LICENSE:=BSD 3 Clause
 PKG_LICENSE_FILES:=LICENSE.txt
 
 PKG_BUILD_PARALLEL:=1
-PKG_JOBS:=-j16
+
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
@@ -29,7 +29,6 @@ include $(INCLUDE_DIR)/cmake.mk
 define Package/$(PKG_NAME)/Default
   CATEGORY:=Neural Network
   SUBMENU:=ncnn
-  DEPENDS:= @BROKEN
 endef
 
 define Package/$(PKG_NAME)/description/Default
@@ -40,6 +39,7 @@ endef
 define Package/libncnn
   $(call Package/$(PKG_NAME)/Default)
   TITLE:=Tencent ncnn library
+  DEPENDS:=+libstdcpp
 endef
 
 Package/libncnn/description = $(Package/$(PKG_NAME)/description/Default)
@@ -51,6 +51,8 @@ define Package/ncnn-benchmark
 endef
 
 Package/ncnn-benchmark/description = $(Package/$(PKG_NAME)/description/Default)
+
+CMAKE_OPTIONS += -DNCNN_SHARED_LIB=ON
 
 define Package/libncnn/config
 	if PACKAGE_libncnn
@@ -74,6 +76,11 @@ define Build/InstallDev
 	$(CP) $(PKG_INSTALL_DIR)/usr/include/* $(1)/usr/include/
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/* $(1)/usr/lib/
+endef
+
+define Package/libncnn/install
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/lib/libncnn.so.* $(1)/usr/lib
 endef
 
 define Package/ncnn-benchmark/install

@@ -1,5 +1,6 @@
 #
 # Copyright (C) 2006-2015 OpenWrt.org
+# Copyright (C) 2020-2021 HandsomeMod Project
 #
 # This is free and open source software.
 # It is available to be redistributed and/or modified under the terms of the Apache-2.0 license.

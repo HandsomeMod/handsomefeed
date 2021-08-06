@@ -1,4 +1,6 @@
+#
 # Copyright (C) 2019 Lucian Cristian <lucian.cristian@gmail.com>
+# Copyright (C) 2020-2021 HandsomeMod Project
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -13,7 +15,6 @@ PKG_SOURCE_URL:=https://gitlab.freedesktop.org/vdpau/libvdpau/-/archive/$(PKG_VE
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_HASH:=b5a52eeac9417edbc396f26c40591ba5df0cd18285f68d84614ef8f06196e50e
 
-##PKG_BUILD_DIR:=$(BUILD_DIR)/$(_PKG_NAME)-$(PKG_VERSION)
 PKG_BUILD_DEPENDS:=xproto
 PKG_INSTALL:=1
 PKG_BUILD_DEPENDS+= meson/host

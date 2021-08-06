@@ -46,8 +46,8 @@
 #endif
 
 //test config
-#define AC108_DAPM_TEST_EN		0
-#define AC108_CODEC_RW_TEST_EN	0
+#undef AC108_DAPM_TEST_EN
+#define AC108_CODEC_RW_TEST_EN
 
 //0:ADC normal,  1:0x5A5A5A,  2:0x123456,  3:0x000000,
 //4~7:I2S_RX_DATA,  other:reserved
@@ -72,10 +72,19 @@
 //AC108 SDO2/TX2 Enable (SDO1 has be enabled default)
 #define AC108_SDO2_EN			0
 #define AC108_DMIC_EN			0	//0:ADC	 1:DMIC
-#define AC108_IDLE_RESET_EN		1	//reset AC108 when in idle time
-#define AC108_POWERON_RESET_EN		1	//AC108 poweron soft reset enable
-//AC108 match method select: 0: i2c_detect, 1:devices tree
-#define AC108_MATCH_DTS_EN		1
+
+/*
+ * maybe waiting the i2c status idle(about 5s).
+ * IDLE_RESET_EN and POWERON_RESET_EN should be defined at the same time.
+ */
+//reset AC108 when in idle time
+#undef AC108_IDLE_RESET_EN
+//AC108 poweron soft reset enable
+#undef AC108_POWERON_RESET_EN
+
+//AC108 match method select: [undef]: i2c_detect, [define]: devices tree
+#define AC108_MATCH_DTS_EN
+#define AC108_REGMAP_EN
 
 #define AC108_REGULATOR_NAME		"regulator_name"
 #define AC108_RATES			(SNDRV_PCM_RATE_8000_96000 | SNDRV_PCM_RATE_KNOT)
@@ -90,6 +99,8 @@ struct i2c_client *i2c_clt[AC108_NUM_MAX];
 static const struct regmap_config ac108_regmap_config = {
 	.reg_bits = 8,	//Number of bits in a register address
 	.val_bits = 8,	//Number of bits in a register value
+	.max_register = AC108_REG_MAX,
+	.cache_type = REGCACHE_NONE,
 };
 
 struct real_val_to_reg_val {
@@ -687,6 +698,14 @@ static const struct snd_soc_dapm_route ac108_dapm_routes[] = {
 
 static int ac108_read(u8 reg, u8 *rt_value, struct i2c_client *client)
 {
+#ifdef AC108_REGMAP_EN
+	unsigned int tmp, ret;
+	struct ac108_priv *ac108 = dev_get_drvdata(&client->dev);
+
+	ret = regmap_read(ac108->regmap, (unsigned int)reg, &tmp);
+	*rt_value = (u8)tmp;
+	return ret;
+#else
 	int ret;
 	u8 read_cmd[3] = {0};
 	u8 cmd_len = 0;
@@ -710,10 +729,15 @@ static int ac108_read(u8 reg, u8 *rt_value, struct i2c_client *client)
 	}
 
 	return 0;
+#endif
 }
 
 static int ac108_write(u8 reg, unsigned char value, struct i2c_client *client)
 {
+#ifdef AC108_REGMAP_EN
+	struct ac108_priv *ac108 = dev_get_drvdata(&client->dev);
+	return regmap_write(ac108->regmap, (unsigned int)reg, (unsigned int)value);
+#else
 	int ret = 0;
 	u8 write_cmd[2] = {0};
 
@@ -727,6 +751,7 @@ static int ac108_write(u8 reg, unsigned char value, struct i2c_client *client)
 	}
 
 	return 0;
+#endif
 }
 
 static int ac108_update_bits(u8 reg, u8 mask, u8 value,
@@ -755,6 +780,7 @@ static int ac108_multi_chips_read(u8 reg, unsigned char *rt_value)
 }
 #endif
 
+#ifdef AC108_IDLE_RESET_EN
 static int ac108_multi_chips_write(u8 reg, unsigned char value)
 {
 	u8 i;
@@ -764,6 +790,7 @@ static int ac108_multi_chips_write(u8 reg, unsigned char value)
 
 	return 0;
 }
+#endif
 
 static int ac108_multi_chips_update_bits(u8 reg, u8 mask, u8 value)
 {
@@ -907,12 +934,12 @@ static void ac108_hw_init(struct i2c_client *i2c)
 	if (ac108->debug_mode) {
 		/*0x66=0x00: Digital ADCs channel HPF disable*/
 		ac108_write(HPF_EN, 0x00, i2c);
-		/*
-		 * 0X7F=0x00: ADC pattern select: 0:ADC normal, 1:0x5A5A5A,
-		 * 2:0x123456, 3:0x00, 4~7:I2S RX data
-		 */
-		ac108_write(ADC_DIG_DEBUG, ac108->debug_mode & 0x7, i2c);
 	}
+	/*
+	 * 0X7F=0x00: ADC pattern select: 0:ADC normal, 1:0x5A5A5A,
+	 * 2:0x123456, 3:0x00, 4~7:I2S RX data
+	 */
+	ac108_write(ADC_DIG_DEBUG, ac108->debug_mode & 0x7, i2c);
 
 #if !AC108_DMIC_EN
 	/*** ADCs analog PGA gain Config***/
@@ -1260,7 +1287,7 @@ static int ac108_hw_params(struct snd_pcm_substream *substream,
 		return 0;
 	}
 
-	//AC108 hw init
+	//FIXME:AC108 hw init
 	for (i = 0; i < ac108_pub_cfg.ac108_nums; i++)
 		ac108_hw_init(i2c_clt[i]);
 
@@ -1392,20 +1419,20 @@ static int ac108_hw_free(struct snd_pcm_substream *substream,
 	//AC108 I2S Globle disable
 	ac108_multi_chips_update_bits(I2S_CTRL, 0x1 << GEN, 0x0 << GEN);
 
-#if !AC108_IDLE_RESET_EN
+#ifdef AC108_IDLE_RESET_EN
+	AC108_DEBUG("AC108 reset all register to their default value\n");
+	ac108_multi_chips_write(CHIP_AUDIO_RST, 0x12);
+#else
 	//repair PLL version no sync problem && Encoding no DAT
 	ac108_multi_chips_update_bits(PLL_CTRL1,
 				0x1 << PLL_EN | 0x1 << PLL_COM_EN,
 				0x0 << PLL_EN | 0x0 << PLL_COM_EN);
 	ac108_multi_chips_update_bits(MOD_CLK_EN,
 				0x1 << I2S | 0x1 << ADC_DIGITAL,
-				0x0<<I2S | 0x0<<ADC_DIGITAL);
+				0x0 << I2S | 0x0 << ADC_DIGITAL);
 	ac108_multi_chips_update_bits(MOD_RST_CTRL,
 				0x1 << I2S | 0x1 << ADC_DIGITAL,
 				0x0 << I2S | 0x0 << ADC_DIGITAL);
-#else
-	AC108_DEBUG("AC108 reset all register to their default value\n");
-	ac108_multi_chips_write(CHIP_AUDIO_RST, 0x12);
 #endif
 
 	return 0;
@@ -1502,28 +1529,21 @@ static struct snd_soc_dai_driver *ac108_dai[] = {
 	&ac108_dai3,
 };
 
-static int ac108_probe(struct snd_soc_codec *codec)
+static int ac108_probe(struct snd_soc_component *codec)
 {
 	struct ac108_priv *ac108 = dev_get_drvdata(codec->dev);
-	int ret = 0;
-
-	ac108->i2cmap = devm_regmap_init_i2c(ac108->i2c, &ac108_regmap_config);
-	ret = PTR_RET(codec->control_data);
-	if (ret < 0) {
-		dev_err(codec->dev, "Failed to set cache I/O: %d\n", ret);
-		return ret;
-	}
 
 	ac108->codec = codec;
 
-#if AC108_DAPM_TEST_EN
+#ifdef AC108_DAPM_TEST_EN
 	struct snd_soc_dapm_context *dapm = snd_soc_codec_get_dapm(codec);
+	int ret = 0;
 
 	/* Add virtual switch */
 	ret = snd_soc_add_codec_controls(codec, ac108_controls,
 					ARRAY_SIZE(ac108_controls));
-	if (ret) {
-		pr_err("[ac108-controls] Failed to register ac108 control, will continue without it.\n");
+	if (ret < 0) {
+		dev_err(codec->dev, "Failed to register ac108 control, will continue without it.\n");
 	}
 	snd_soc_dapm_new_controls(dapm, ac108_dapm_widgets, ARRAY_SIZE(ac108_dapm_widgets));
 	snd_soc_dapm_add_routes(dapm, ac108_dapm_routes, ARRAY_SIZE(ac108_dapm_routes));
@@ -1532,15 +1552,15 @@ static int ac108_probe(struct snd_soc_codec *codec)
 	return 0;
 }
 
-static int ac108_remove(struct snd_soc_codec *codec)
+static void ac108_remove(struct snd_soc_component *component)
 {
-	return 0;
+	return;
 }
 
 #ifdef CONFIG_PM
-static int ac108_suspend(struct snd_soc_codec *codec)
+static int ac108_suspend(struct snd_soc_component *codec)
 {
-#if AC108_MATCH_DTS_EN
+#ifdef AC108_MATCH_DTS_EN
 	struct ac108_priv *ac108 = dev_get_drvdata(codec->dev);
 
 	/* FIXME: only support one power control */
@@ -1555,13 +1575,13 @@ static int ac108_suspend(struct snd_soc_codec *codec)
 	return 0;
 }
 
-static int ac108_resume(struct snd_soc_codec *codec)
+static int ac108_resume(struct snd_soc_component *codec)
 {
-#if !AC108_IDLE_RESET_EN
+#ifndef AC108_IDLE_RESET_EN
 	u8 i;
 #endif
 
-#if AC108_MATCH_DTS_EN
+#ifdef AC108_MATCH_DTS_EN
 	struct ac108_priv *ac108 = dev_get_drvdata(codec->dev);
 	struct i2c_client *i2c = ac108->i2c;
 	int ret;
@@ -1586,7 +1606,7 @@ static int ac108_resume(struct snd_soc_codec *codec)
 	}
 #endif
 
-#if !AC108_IDLE_RESET_EN
+#ifndef AC108_IDLE_RESET_EN
 	for (i = 0; i < ac108_pub_cfg.ac108_nums; i++)
 		ac108_hw_init(i2c_clt[i]);
 #endif
@@ -1601,94 +1621,142 @@ static int ac108_resume(struct snd_soc_codec *codec)
 
 #endif
 
-#if AC108_CODEC_RW_TEST_EN
-static unsigned int ac108_codec_read(struct snd_soc_codec *codec,
+#ifdef AC108_CODEC_RW_TEST_EN
+static unsigned int ac108_codec_read(struct snd_soc_component *codec,
 				unsigned int reg)
 {
-	u8 val_r;
+	unsigned int reg_val;
 	struct ac108_priv *ac108 = dev_get_drvdata(codec->dev);
 
-	ac108_read(reg, &val_r, ac108->i2c);
-	return val_r;
+	regmap_read(ac108->regmap, reg, &reg_val);
+	return reg_val;
 }
 
-static int ac108_codec_write(struct snd_soc_codec *codec, unsigned int reg,
+static int ac108_codec_write(struct snd_soc_component *codec, unsigned int reg,
 			unsigned int value)
 {
-	ac108_multi_chips_write(reg, value);
+	struct ac108_priv *ac108 = dev_get_drvdata(codec->dev);
+
+	regmap_write(ac108->regmap, reg & 0xFF, value & 0xFF);
 	return 0;
 }
 #endif
 
 /*** define  ac108  codec_driver struct ***/
-static const struct snd_soc_codec_driver ac108_soc_codec_driver = {
+static const struct snd_soc_component_driver ac108_soc_codec_driver = {
 	.probe = ac108_probe,
 	.remove = ac108_remove,
 	.suspend = ac108_suspend,
 	.resume = ac108_resume,
-	.read		= ac108_read,
-	.write		= ac108_write,
+#ifdef AC108_CODEC_RW_TEST_EN
+	.read = ac108_codec_read,
+	.write = ac108_codec_write,
+#endif
 };
 
 
-static ssize_t ac108_store(struct device *dev, struct device_attribute *attr,
+static ssize_t ac108_reg_store(struct device *dev, struct device_attribute *attr,
 			const char *buf, size_t count)
 {
 	struct ac108_priv *ac108 = dev_get_drvdata(dev);
-	int val = 0;
-	int flag = 0;
-	u8 i = 0;
-	u8 reg = 0;
-	u8 num = 0;
-	u8 value_w = 0;
-	u8 value_r = 0;
+	int ret = 0;
+	unsigned int input_reg_offset = 0;
+	unsigned int input_val = 0;
+	unsigned int reg_val_read = 0;
+	unsigned int rw_flag = 0;
 
-	val = simple_strtol(buf, NULL, 16);
-	flag = (val >> 16) & 0xFF;
+	ret = sscanf(buf, "%d,0x%x,0x%x", &rw_flag, &input_reg_offset, &input_val);
 
-	if (flag) {
-		reg = (val >> 8) & 0xFF;
-		value_w = val & 0xFF;
-		pr_err("\nWrite: start REG:0x%02x,val:0x%02x,count:0x%02x\n",
-			reg, value_w, flag);
-		while (flag--) {
-			ac108_write(reg, value_w, ac108->i2c);
-			pr_err("Write 0x%02x to REG:0x%02x\n", value_w, reg);
-			reg++;
+	if (ret == 3) {
+		if (!(rw_flag == 1 || rw_flag == 0)) {
+			dev_err(dev, "rw_flag should be 0(read) or 1(write).\n");
+			return count;
+		}
+		input_reg_offset &= 0xFF;
+		input_val &= 0xFF;
+		if ((input_reg_offset > AC108_REG_MAX) ||
+			((input_reg_offset + input_val) > AC108_REG_MAX)) {
+				dev_err(dev, "reg_dump addr[0x%02x] + count[0x%02x] > AC108_REG_MAX.\n",
+					ac108->reg_dump_offset,
+					ac108->reg_dump_count);
+				return count;
+			}
+		if (input_reg_offset > AC108_REG_MAX) {
+			pr_err("the reg offset is invalid! [0x0 - 0x%x]\n",
+				AC108_REG_MAX);
+			return count;
+		}
+		if (rw_flag) {
+			regmap_write(ac108->regmap, input_reg_offset, input_val);
+			regmap_read(ac108->regmap, input_reg_offset, &reg_val_read);
+			pr_err("\n Reg[0x%x] : 0x%x\n", input_reg_offset, reg_val_read);
+			return count;
+		} else {
+			ac108->reg_dump_offset = input_reg_offset;
+			ac108->reg_dump_count = input_val;
 		}
 	} else {
-		reg = (val >> 8) & 0xFF;
-		num = val & 0xff;
-		pr_err("\nRead: start REG:0x%02x,count:0x%02x\n", reg, num);
-
-		do {
-			value_r = 0;
-			ac108_read(reg, &value_r, ac108->i2c);
-			pr_err("REG[0x%02x]: 0x%02x;  ", reg, value_r);
-			reg++;
-			i++;
-			if ((i == num) || (i % 4 == 0))
-				pr_err("\n");
-		} while (i < num);
+		pr_err("ret:%d, The num of params invalid!\n", ret);
+		pr_err("\nExample(reg range: 0x0 - 0x%x):\n", AC108_REG_MAX);
+		pr_err("\nRead reg start[0x04]; reg count:0x10:\n");
+		pr_err("      echo 0,0x04,0x10 > ac108_reg\n");
+		pr_err("Write reg[0x04]=0x10\n");
+		pr_err("      echo 1,0x04,0x10 > ac108_reg\n");
 	}
 
 	return count;
 }
 
-static ssize_t ac108_show(struct device *dev, struct device_attribute *attr, char *buf)
+static ssize_t ac108_reg_show(struct device *dev, struct device_attribute *attr, char *buf)
 {
-	pr_err("/*** AC108 driver version: V3.0 ***/\n");
-	pr_err("echo flag|reg|val > ac108\n");
-	pr_err("eg->read start addres=0x06,count=0x10: echo 0610 >ac108\n");
-	pr_err("eg->write start addres=0x90,value=0x3c,count=0x4: echo 4903c >ac108\n");
-	//pr_err("eg write value:0xfe to address:0x06 :echo 106fe > ac108\n");
-	return 0;
+	ssize_t count = 0;
+	unsigned int i = 0;
+	unsigned int reg_val_read = 0;
+	struct ac108_priv *ac108 = dev_get_drvdata(dev);
+
+	count += snprintf(buf, PAGE_SIZE, "\n/*** AC108 driver version: V3.0 ***/\n\n");
+
+	if (!ac108->reg_dump_count) {
+		count += snprintf(buf + count, PAGE_SIZE - count,
+			"echo flag(Hex),reg(Hex),val(Hex) > ac108\n");
+		count += snprintf(buf + count, PAGE_SIZE - count,
+			"eg: read start addres=0x06, count=0x10;\n");
+		count += snprintf(buf + count, PAGE_SIZE - count,
+			"[command] echo 0,0x6,0x10 > ac108\n");
+		count += snprintf(buf + count, PAGE_SIZE - count,
+			"eg: write start addres=0x90, value=0x3c;\n");
+		count += snprintf(buf + count, PAGE_SIZE - count,
+			"[command] echo 1,0x90,0x3c > ac108\n");
+	} else {
+		do {
+			reg_val_read = 0;
+			if (count >= PAGE_SIZE) {
+				dev_err(dev, "char count:%ld >= PAGE_SIZE.\n", (long)count);
+				return count;
+			}
+			regmap_read(ac108->regmap, ac108->reg_dump_offset + i,
+					&reg_val_read);
+			count += snprintf(buf + count, PAGE_SIZE - count,
+					"[0x%02x]: 0x%02x;  ",
+					ac108->reg_dump_offset + i,
+					reg_val_read);
+			i++;
+			if ((i == ac108->reg_dump_count) || (i % 4 == 0)) {
+				if (count >= PAGE_SIZE) {
+					dev_err(dev, "char count:%ld >= PAGE_SIZE.\n", (long)count);
+					return count;
+				}
+				count += snprintf(buf + count, PAGE_SIZE - count, "\n");
+			}
+		} while (i < ac108->reg_dump_count);
+	}
+	return count;
 }
 
-static DEVICE_ATTR(ac108, 0644, ac108_show, ac108_store);
+static DEVICE_ATTR(ac108_reg, 0644, ac108_reg_show, ac108_reg_store);
 
 static struct attribute *ac108_debug_attrs[] = {
-	&dev_attr_ac108.attr,
+	&dev_attr_ac108_reg.attr,
 	NULL,
 };
 
@@ -1702,7 +1770,7 @@ static int ac108_i2c_probe(struct i2c_client *i2c,
 {
 	struct ac108_priv *ac108 = NULL;
 	int ret = 0;
-#if AC108_MATCH_DTS_EN
+#ifdef AC108_MATCH_DTS_EN
 	enum of_gpio_flags gpio_flags;
 	unsigned int temp_val = 0;
 	struct device_node *np = i2c->dev.of_node;
@@ -1717,7 +1785,13 @@ static int ac108_i2c_probe(struct i2c_client *i2c,
 	ac108->i2c = i2c;
 	dev_set_drvdata(&i2c->dev, ac108);
 
-#if AC108_MATCH_DTS_EN
+	ac108->regmap = devm_regmap_init_i2c(ac108->i2c, &ac108_regmap_config);
+	if (IS_ERR_OR_NULL(ac108->regmap)) {
+		dev_err(&i2c->dev, "Failed to set cache I/O.\n");
+		goto err_devm_regmap_i2c;
+	}
+
+#ifdef AC108_MATCH_DTS_EN
 	ret = of_property_read_u32(np, "regulator_used", &temp_val);
 	if (ret < 0) {
 		dev_err(&i2c->dev, "get regulator_used failed.\n");
@@ -1883,22 +1957,23 @@ static int ac108_i2c_probe(struct i2c_client *i2c,
 
 	if (i2c_id->driver_data < AC108_NUM_MAX) {
 		i2c_clt[i2c_id->driver_data] = i2c;
-		ret = snd_soc_register_codec(&i2c->dev, &ac108_soc_codec_driver,
+		ret = devm_snd_soc_register_component(&i2c->dev, &ac108_soc_codec_driver,
 				ac108_dai[i2c_id->driver_data], 1);
 		if (ret < 0) {
 			dev_err(&i2c->dev, "Failed to register ac108 codec: %d\n", ret);
 			goto err_register_codec;
 		}
-#if AC108_POWERON_RESET_EN
+#ifdef AC108_POWERON_RESET_EN
 		ac108_write(CHIP_AUDIO_RST, 0x12, i2c);
 #endif
-#if !AC108_IDLE_RESET_EN
+#ifndef AC108_IDLE_RESET_EN
 		ac108_hw_init(i2c);
 #endif
-	} else
+	} else {
 		pr_err("The wrong i2c_id number :%d\n",
 			(int)(i2c_id->driver_data));
-
+		goto err_i2c_driver_data;
+	}
 	ret = sysfs_create_group(&i2c->dev.kobj, &ac108_debug_attr_group);
 	if (ret < 0) {
 		pr_err("failed to create attr group\n");
@@ -1910,9 +1985,9 @@ static int ac108_i2c_probe(struct i2c_client *i2c,
 	return 0;
 
 err_sysfs_create_group:
-	snd_soc_unregister_codec(&i2c->dev);
 err_register_codec:
-#if AC108_MATCH_DTS_EN
+err_i2c_driver_data:
+#ifdef AC108_MATCH_DTS_EN
 err_get_twi_bus:
 	if (ac108->reset_gpio.used)
 		gpio_free(ac108->reset_gpio.gpio);
@@ -1932,6 +2007,7 @@ err_regulator_get:
 err_regulator_get_name:
 err_property_get_power_vol:
 #endif
+err_devm_regmap_i2c:
 	devm_kfree(&i2c->dev, ac108);
 	return ret;
 }
@@ -1942,14 +2018,13 @@ static int ac108_i2c_remove(struct i2c_client *i2c)
 	unsigned int i = 0;
 
 	sysfs_remove_group(&i2c->dev.kobj, &ac108_debug_attr_group);
-	snd_soc_unregister_codec(&i2c->dev);
 
 	for (i = 0; i < AC108_NUM_MAX; i++) {
 		if (i2c_clt[i] == i2c)
 			i2c_clt[i] = NULL;
 	}
 	ac108_pub_cfg.ac108_nums--;
-#if AC108_MATCH_DTS_EN
+#ifdef AC108_MATCH_DTS_EN
 	if (ac108->reset_gpio.used)
 		gpio_free(ac108->reset_gpio.gpio);
 	if (ac108->power_gpio.used)
@@ -1963,7 +2038,7 @@ static int ac108_i2c_remove(struct i2c_client *i2c)
 	return 0;
 }
 
-#if !AC108_MATCH_DTS_EN
+#ifndef AC108_MATCH_DTS_EN
 //I2C devices register method_3: i2c_detect
 static int ac108_i2c_detect(struct i2c_client *client,
 			struct i2c_board_info *info)
@@ -2023,17 +2098,17 @@ static const struct i2c_device_id ac108_i2c_id[] = {
 };
 MODULE_DEVICE_TABLE(i2c, ac108_i2c_id);
 
-#if AC108_MATCH_DTS_EN
+#ifdef AC108_MATCH_DTS_EN
 //I2C driver and devices match method_2: of_device_id (devices tree)
 static const struct of_device_id ac108_dt_ids[] = {
 	//ac108_0
-	{ .compatible = "MicArray_0", },
+	{ .compatible = "Allwinner,MicArray_0", },
 	//ac108_1
-	{ .compatible = "MicArray_1", },
+	{ .compatible = "Allwinner,MicArray_1", },
 	//ac108_2
-	{ .compatible = "MicArray_2", },
+	{ .compatible = "Allwinner,MicArray_2", },
 	//ac108_3
-	{ .compatible = "MicArray_3", },
+	{ .compatible = "Allwinner,MicArray_3", },
 	{},
 };
 MODULE_DEVICE_TABLE(of, ac108_dt_ids);
@@ -2044,14 +2119,14 @@ static struct i2c_driver ac108_i2c_driver = {
 	.driver = {
 		.name = "ac108",
 		.owner = THIS_MODULE,
-#if AC108_MATCH_DTS_EN
+#ifdef AC108_MATCH_DTS_EN
 		.of_match_table = of_match_ptr(ac108_dt_ids),
 #endif
 	},
 	.probe = ac108_i2c_probe,
 	.remove = ac108_i2c_remove,
 	.id_table = ac108_i2c_id,
-#if !AC108_MATCH_DTS_EN
+#ifndef AC108_MATCH_DTS_EN
 	.address_list = ac108_i2c_addr,
 	.detect = ac108_i2c_detect,
 #endif

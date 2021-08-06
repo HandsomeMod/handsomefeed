@@ -1,0 +1,29 @@
+From 4b2e14142d9e8f20e1a60907ff09ab96ebc69f5e Mon Sep 17 00:00:00 2001
+From: handsomeyingyan <handsomeyingyan@github.com>
+Date: Thu, 22 Jul 2021 22:19:33 +0800
+Subject: [PATCH] musl compat fix
+
+---
+ net/ppp_defs.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+ create mode 100644 net/ppp_defs.h
+
+diff --git a/net/ppp_defs.h b/net/ppp_defs.h
+new file mode 100644
+index 0000000..f8924c4
+--- /dev/null
++++ b/net/ppp_defs.h
+@@ -0,0 +1,10 @@
++#ifndef _NET_PPP_DEFS_H
++#define _NET_PPP_DEFS_H 1
++
++#define __need_time_t
++#include <time.h>
++
++#include <asm/types.h>
++#include <linux/ppp_defs.h>
++
++#endif /* net/ppp_defs.h */
+-- 
+2.32.0
+

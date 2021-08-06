@@ -16,7 +16,7 @@
 
 
 /*** AC108 Codec Register Define***/
-#include "sound-compatible-4.18.h"
+
 //Chip Reset
 #define CHIP_AUDIO_RST		0x00
 
@@ -190,6 +190,8 @@
 #define BGTC_DAT			0xD1
 #define BGVC_DAT			0xD2
 #define PRNG_CLK_CTRL		0xDF
+
+#define AC108_REG_MAX		PRNG_CLK_CTRL
 
 
 
@@ -829,7 +831,10 @@ struct ref_chip_config {
 
 struct ac108_priv {
 	struct i2c_client *i2c;
-	struct snd_soc_codec *codec;
+	struct snd_soc_component *codec;
+	struct regmap *regmap;
+	unsigned int reg_dump_offset;
+	unsigned int reg_dump_count;
 
 	struct voltage_supply vol_supply;
 	struct gpio_setting power_gpio;

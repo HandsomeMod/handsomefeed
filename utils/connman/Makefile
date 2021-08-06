@@ -1,5 +1,5 @@
 #
-# Cpoyright (C) 2020 HandsomeMod Project
+# Cpoyright (C) 2020-2021 HandsomeMod Project
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -68,7 +68,7 @@ define Package/$(PKG_NAME)/install
 	#config
 	$(INSTALL_DIR) $(1)/etc/connman
 	$(CP) $(PKG_BUILD_DIR)/src/main.conf $(1)/etc/connman
-       #main program
+       	#main program
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(CP) $(PKG_INSTALL_DIR)/usr/bin/connmanctl $(1)/usr/bin/
 
@@ -76,9 +76,10 @@ define Package/$(PKG_NAME)/install
 	$(CP) $(PKG_INSTALL_DIR)/usr/sbin/connmand $(1)/usr/sbin
 	$(CP) $(PKG_INSTALL_DIR)/usr/sbin/connmand-wait-online $(1)/usr/sbin
 	$(CP) $(PKG_INSTALL_DIR)/usr/sbin/connman-vpnd $(1)/usr/sbin
-       #libs
+       	#libs
 	$(INSTALL_DIR) $(1)/usr/lib/connman
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/connman/* $(1)/usr/lib/connman
+	
 	#dbus
 	$(INSTALL_DIR) $(1)/usr/share/dbus-1/system-services
 	$(CP) $(PKG_INSTALL_DIR)/usr/share/dbus-1/system-services/* $(1)/usr/share/dbus-1/system-services

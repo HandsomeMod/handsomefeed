@@ -1,23 +1,20 @@
 #
-# Copyright (C) 2015 Lubomir Rintel <lkundrak@v3.sk>
-# Cpoyright (C) 2020 HandsomeMod Project
+# Copyright (C) 2020-2021 HandsomeMod Project
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
 #
 
-# TODO: initscript
-
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=Network-Manager
-PKG_VERSION:=1.26
-PKG_RELEASE:=0
+PKG_VERSION:=1.32
+PKG_RELEASE:=2
 
 
 PKG_SOURCE_URL:=@GNOME/NetworkManager/$(PKG_VERSION)/
-PKG_MD5SUM:= a137bce1aef292cfa83958766dc9de20
+PKG_HASH:= 701d511067f757d0f92f412c98cdb49a74a6ba69448aabb1beadacbc171e3873
 PKG_SOURCE_SUBDIR:=NetworkManager-$(PKG_VERSION).$(PKG_RELEASE)
 PKG_SOURCE:=NetworkManager-$(PKG_VERSION).$(PKG_RELEASE).tar.xz
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_SOURCE_SUBDIR)
@@ -27,7 +24,7 @@ PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
 PKG_LICENSE:=GPL-2+
 
-PKG_BUILD_DEPENDS:=maeson/host
+PKG_BUILD_DEPENDS:=meson/host intltool/host
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
@@ -40,7 +37,7 @@ define Package/network-manager
   CATEGORY:=Network
   TITLE:=Network Management Daemon and Utilities
   URL:=http://www.freedesktop.org/wiki/NetworkManager/
-  DEPENDS:=+glib2 +eudev +libndp +libnl +libgnutls +libgcrypt +libdbus-glib +libdbus +libuuid +libncurses +libreadline
+  DEPENDS:=+dbus +glib2 +eudev +libndp +libnl +libgnutls +libgcrypt +libdbus-glib +libdbus +libuuid +libncurses +libreadline +libcurl +libnewt +ifupdown +iptables +dnsmasq +wireless-tools +wpa-supplicant-dbus +ppp
 endef
 
 define Package/network-manager/description
@@ -51,35 +48,55 @@ define Package/network-manager/description
   services.
 endef
 
+	
 MESON_ARGS += \
 	-Dsystemdsystemunitdir=no \
 	-Dmodify_system=true \
 	-Dselinux=false \
 	-Dsystemd_journal=false \
 	-Dlibaudit=no \
-	-Diwd=true \
+	-Diwd=false \
 	-Dconfig_plugins_default=ifupdown \
 	-Difupdown=true \
 	-Ddhcpcd=true \
 	-Dconfig_dhcp_default=internal \
 	-Dvapi=true \
 	-Dtests=no \
-	-Dpolkit_agent=true \
+	-Diptables=/usr/sbin/iptables \
+	-Ddnsmasq=/usr/sbin/dnsmasq \
+	-Dpolkit_agent=false \
 	-Dsession_tracking=no \
 	-Dqt=false \
 	-Dintrospection=false \
-	-Dofono=true \
-	-Djson_validation=false
+	-Dofono=false \
+	-Djson_validation=false \
+	-Dpolkit=false \
+	-Dcrypto=gnutls \
+	-Dmodem_manager=false \
+	-Dovs=false \
+	-Dlibpsl=false \
+	-Dvapi=false
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include
 	$(CP) $(PKG_INSTALL_DIR)/usr/include/libnm $(1)/usr/include/
-	$(CP) $(PKG_INSTALL_DIR)/usr/include/libnm-glib $(1)/usr/include/
-	$(CP) $(PKG_INSTALL_DIR)/usr/include/NetworkManager $(1)/usr/include/
+	
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/*.so* $(1)/usr/lib/
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/* $(1)/usr/lib/
+	
 	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/*.pc $(1)/usr/lib/pkgconfig/
+	
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(CP) $(PKG_INSTALL_DIR)/usr/sbin/NetworkManager $(1)/usr/sbin/
+
+	$(INSTALL_DIR) $(1)/usr/bin
+	$(CP) $(PKG_INSTALL_DIR)/usr/bin/* $(1)/usr/bin/
+	
+	$(INSTALL_DIR) $(1)/usr/libexec
+	$(CP) $(PKG_INSTALL_DIR)/usr/libexec/* $(1)/usr/libexec/
+
+	
 endef
 
 define Package/network-manager/install
@@ -88,41 +105,48 @@ define Package/network-manager/install
 	$(CP) ./files/networkmanager.init $(1)/etc/init.d/networkmanager
 
 	#config
-	$(INSTALL_DIR) $(1)/etc
-	$(CP) ./files/networkmanager.conf $(1)/etc/
+	$(INSTALL_DIR) $(1)/etc/NetworkManager
+	$(CP) ./files/NetworkManager.conf $(1)/etc/NetworkManager/NetworkManager.conf
 
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(CP) $(PKG_INSTALL_DIR)/usr/sbin/NetworkManager $(1)/usr/sbin/
 
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(CP) $(PKG_INSTALL_DIR)/usr/bin/nm-online $(1)/usr/bin/
-	$(CP) $(PKG_INSTALL_DIR)/usr/bin/nmcli $(1)/usr/bin/
+	$(CP) $(PKG_INSTALL_DIR)/usr/bin/* $(1)/usr/bin/
+	
+	$(INSTALL_DIR) $(1)/usr/libexec
+	$(CP) $(PKG_INSTALL_DIR)/usr/libexec/* $(1)/usr/libexec/
 
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/*.so.* $(1)/usr/lib/
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/nm-avahi-autoipd.action $(1)/usr/lib
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/nm-iface-helper $(1)/usr/lib
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/nm-dispatcher $(1)/usr/lib
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/nm-dhcp-helper $(1)/usr/lib
-
-	$(INSTALL_DIR) $(1)/lib/udev/rules.d
-	$(CP) $(PKG_INSTALL_DIR)/lib/udev/rules.d/*.rules $(1)/lib/udev/rules.d
-
-	# TODO: Separate packages
-	$(INSTALL_DIR) $(1)/usr/lib/NetworkManager
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/NetworkManager/libnm-device-plugin-adsl.so $(1)/usr/lib/NetworkManager
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/NetworkManager/libnm-device-plugin-wifi.so $(1)/usr/lib/NetworkManager
+	
+	$(INSTALL_DIR) $(1)/usr/lib/NetworkManager/$(PKG_VERSION).$(PKG_RELEASE)
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/NetworkManager/$(PKG_VERSION).$(PKG_RELEASE)/* $(1)/usr/lib/NetworkManager/$(PKG_VERSION).$(PKG_RELEASE)
 
 	$(INSTALL_DIR) $(1)/usr/lib/pppd
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pppd/* $(1)/usr/lib/pppd
+	
+	$(INSTALL_DIR) $(1)/usr/share/bash-completion/completions
+	$(CP) $(PKG_INSTALL_DIR)/usr/share/bash-completion/completions/* $(1)/usr/lib/pppd
+	
+	$(INSTALL_DIR) $(1)/usr/lib/firewalld/zones
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/firewalld/zones/* $(1)/usr/lib/firewalld/zones/
 
 	$(INSTALL_DIR) $(1)/usr/share/dbus-1
 	$(CP) $(PKG_INSTALL_DIR)/usr/share/dbus-1/* $(1)/usr/share/dbus-1
-
-	$(INSTALL_DIR) $(1)/usr/share/polkit-1/actions
-	$(CP) $(PKG_INSTALL_DIR)/usr/share/polkit-1/actions/org.freedesktop.NetworkManager.policy $(1)/usr/share/polkit-1/actions
-
+	
+	$(INSTALL_DIR) $(1)/usr/lib/NetworkManager/conf.d
+	$(INSTALL_DIR) $(1)/usr/lib/NetworkManager/dispatcher.d/no-wait.d
+	$(INSTALL_DIR) $(1)/usr/lib/NetworkManager/dispatcher.d/pre-up.d
+	$(INSTALL_DIR) $(1)/usr/lib/NetworkManager/dispatcher.d/pre-down.d
+	$(INSTALL_DIR) $(1)/usr/lib/NetworkManager/system-connections
+	$(INSTALL_DIR) $(1)/usr/lib/NetworkManager/VPN
+	
+	$(INSTALL_DIR) $(1)/etc/NetworkManager/conf.d
 	$(INSTALL_DIR) $(1)/etc/NetworkManager/system-connections
+	$(INSTALL_DIR) $(1)/etc/NetworkManager/dnsmasq.d
+	$(INSTALL_DIR) $(1)/etc/NetworkManager/dnsmasq-shared.d
+	$(INSTALL_DIR) $(1)/etc/NetworkManager/dispatcher.d/no-wait.d
 	$(INSTALL_DIR) $(1)/etc/NetworkManager/dispatcher.d/pre-up.d
 	$(INSTALL_DIR) $(1)/etc/NetworkManager/dispatcher.d/pre-down.d
 endef

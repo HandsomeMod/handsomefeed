@@ -36,11 +36,10 @@ NOSTDINC_FLAGS = \
 	-I$(STAGING_DIR)/usr/include/mac80211/uapi \
 	-include backport/backport.h
 
-NOSTDINC_FLAGS+=-DCONFIG_IOCTL_CFG80211 -DRTW_USE_CFG80211_STA_EVENT -DBUILD_OPENWRT
+NOSTDINC_FLAGS+=-DESP_ACK_INTERRUPT
 
 define Build/Prepare
 	$(call Build/Prepare/Default)
-	#mkdir -p $(PKG_BUILD_DIR)
 	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
 

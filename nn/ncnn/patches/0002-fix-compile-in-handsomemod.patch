@@ -1,0 +1,27 @@
+From 80c08fcce9ec2f4b991a634d1ac920ec9b3416a0 Mon Sep 17 00:00:00 2001
+From: HandsomeYingyan <handsomeyingyan@gmail.com>
+Date: Thu, 5 Aug 2021 16:58:14 +0800
+Subject: [PATCH] fix compile in handsomemod
+
+---
+ src/cpu.cpp | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/src/cpu.cpp b/src/cpu.cpp
+index 342e9a3..c8ded80 100644
+--- a/src/cpu.cpp
++++ b/src/cpu.cpp
+@@ -666,11 +666,7 @@ static int set_sched_affinity(const CpuSet& thread_affinity_mask)
+ #if defined(__GLIBC__) || defined(__OHOS__)
+     pid_t pid = syscall(SYS_gettid);
+ #else
+-#if defined(PI3) || (defined(__MUSL__) && __MUSL_MINOR__ <= 14)
+     pid_t pid = getpid();
+-#else
+-    pid_t pid = gettid();
+-#endif
+ #endif
+ 
+     int syscallret = syscall(__NR_sched_setaffinity, pid, sizeof(cpu_set_t), &thread_affinity_mask.cpu_set);
+-- 
+2.25.1

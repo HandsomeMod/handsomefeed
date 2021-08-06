@@ -1,0 +1,24 @@
+From 3f76d37109961ac3e9ab8c5260879085cb106541 Mon Sep 17 00:00:00 2001
+From: HandsomeYingyan <handsomeyingyan@gmail.com>
+Date: Mon, 26 Jul 2021 11:56:23 +0800
+Subject: [PATCH] ugly hack
+
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 739aef2..4d487db 100644
+--- a/Makefile
++++ b/Makefile
+@@ -10,7 +10,7 @@ CFLAGS += -D'IFUPDOWN_VERSION="$(VERSION)"'
+ DEFNFILES := inet.defn ipx.defn inet6.defn can.defn
+ 
+ OBJ := main.o addrfam.o execute.o config.o \
+-	$(patsubst %.defn,%.o,$(DEFNFILES)) archcommon.o arch$(ARCH).o meta.o link.o
++	$(patsubst %.defn,%.o,$(DEFNFILES)) archcommon.o archlinux.o meta.o link.o
+ 
+ MAN := $(patsubst %.defn,%.man,$(DEFNFILES))
+ 
+-- 
+2.25.1
