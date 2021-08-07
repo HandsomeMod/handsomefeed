@@ -43,15 +43,15 @@ define Package/ifupdown/install
 	
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_DIR) $(1)/etc/default
-	$(CP) ./files/networking.init $(1)/etc/init.d/networking
-	$(CP) ./files/networking $(1)/etc/default/networking
+	$(INSTALL_BIN) ./files/networking.init $(1)/etc/init.d/networking
+	$(INSTALL_BIN) ./files/networking $(1)/etc/default/networking
 	
 	$(INSTALL_DIR) $(1)/etc/network
-	$(CP) ./files/interfaces $(1)/etc/network
+	$(INSTALL_BIN) ./files/interfaces $(1)/etc/network
 	$(INSTALL_DIR) $(1)/etc/network/if-down.d
 	$(INSTALL_DIR) $(1)/etc/network/if-post-down.d
 	$(INSTALL_DIR) $(1)/etc/network/if-pre-up.d
-	$(CP) ./files/wait_iface $(1)/etc/network/if-pre-up.d
+	$(INSTALL_BIN) ./files/wait_iface $(1)/etc/network/if-pre-up.d
 	$(INSTALL_DIR) $(1)/etc/network/if-up.d
 	$(INSTALL_DIR) $(1)/etc/network/interfaces.d
 endef

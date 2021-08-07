@@ -37,7 +37,9 @@ define Package/network-manager
   CATEGORY:=Network
   TITLE:=Network Management Daemon and Utilities
   URL:=http://www.freedesktop.org/wiki/NetworkManager/
-  DEPENDS:=+dbus +glib2 +eudev +libndp +libnl +libgnutls +libgcrypt +libdbus-glib +libdbus +libuuid +libncurses +libreadline +libcurl +libnewt +ifupdown +iptables +dnsmasq +wireless-tools +wpa-supplicant-dbus +ppp
+  DEPENDS:=+dbus +glib2 +eudev +libndp +libnl +libgnutls +libgcrypt +libdbus-glib \
+  +libdbus +libuuid +libncurses +libreadline +libcurl +libnewt +ifupdown +iptables +dnsmasq-full \
+  +@PACKAGE_dnsmasq_full_dbus +wireless-tools +wpa-supplicant-dbus +ppp
 endef
 
 define Package/network-manager/description
@@ -100,9 +102,10 @@ define Build/InstallDev
 endef
 
 define Package/network-manager/install
+
 	#init.d 
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(CP) ./files/networkmanager.init $(1)/etc/init.d/networkmanager
+	$(INSTALL_BIN) ./files/networkmanager.init $(1)/etc/init.d/networkmanager
 
 	#config
 	$(INSTALL_DIR) $(1)/etc/NetworkManager

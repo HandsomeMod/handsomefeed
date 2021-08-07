@@ -15,8 +15,8 @@
 #	needing more device nodes than the bare-bones set -- /dev/console,
 #	/dev/zero, /dev/null -- that's needed to boot and run this script.
 
-START=80
-STOP=80
+START=18
+STOP=20
 
 UDEV_BIN=/sbin/udevd
 # Check for config file and read it
