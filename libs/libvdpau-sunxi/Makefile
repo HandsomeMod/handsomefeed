@@ -32,25 +32,20 @@ TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed
 
 define Build/InstallDev
 	$(INSTALL_DIR) \
-	  $(1)/usr/include \
-	  $(1)/usr/lib
+	  $(1)/usr/lib/vdpau
 
 	$(CP) \
-	  $(PKG_INSTALL_DIR)/usr/include/* \
-	  $(1)/usr/include/
-
-	$(CP) \
-	  $(PKG_INSTALL_DIR)/usr/lib/{pkgconfig,*.so*} \
-	  $(1)/usr/lib/
+	  $(PKG_INSTALL_DIR)/usr/lib/vdpau/*.so* \
+	  $(1)/usr/lib/vdpau
 endef
 
 define Package/libvdpau-sunxi/install
 	$(INSTALL_DIR) \
-	  $(1)/usr/lib
+	  $(1)/usr/lib/vdpau
 
 	$(CP) \
-	  $(PKG_INSTALL_DIR)/usr/lib/*.so* \
-	  $(1)/usr/lib/
+	  $(PKG_INSTALL_DIR)/usr/lib/vdpau/*.so* \
+	  $(1)/usr/lib/vdpau
 endef
 
 $(eval $(call BuildPackage,libvdpau-sunxi))
