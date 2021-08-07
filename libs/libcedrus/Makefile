@@ -48,7 +48,7 @@ define Package/libcedrus/install
 	  $(1)/usr/lib
 
 	$(CP) \
-	  $(PKG_INSTALL_DIR)/usr/lib/*.so* \
+	  $(PKG_INSTALL_DIR)/usr/local/lib/*.so* \
 	  $(1)/usr/lib/
 endef
 
