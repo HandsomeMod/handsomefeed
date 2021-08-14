@@ -36,7 +36,7 @@ NOSTDINC_FLAGS = \
 	-I$(STAGING_DIR)/usr/include/mac80211/uapi \
 	-include backport/backport.h
 
-NOSTDINC_FLAGS+=-DESP_ACK_INTERRUPT
+#NOSTDINC_FLAGS+=-DESP_ACK_INTERRUPT
 
 define Build/Prepare
 	$(call Build/Prepare/Default)
