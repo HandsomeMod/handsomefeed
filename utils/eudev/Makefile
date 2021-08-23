@@ -30,7 +30,7 @@ define Package/eudev
   URL:=https://wiki.gentoo.org/wiki/Project:Eudev
   MENU:=1
   DEPENDS:=+librt +EUDEV_EXTRA_blkid:libblkid +EUDEV_EXTRA_kmod:libkmod
-  PROVIDES:=udev
+  PROVIDES:=udev libudev
   CONFLICTS:=udev
 endef
 

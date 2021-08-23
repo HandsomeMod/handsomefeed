@@ -1,4 +1,6 @@
 menu "Select cedarx configuration options"
+depends on PACKAGE_libcedarx
+
 comment "Video Encoders ---"
 config CEDAR_VIDEO_ENCODER_ALL
 	depends on TRECORDER
@@ -386,6 +388,7 @@ endmenu
 
 
 menu "Select Cedarx memory options"
+depends on PACKAGE_libcedarx
 config CUSTOM_VBV_ENABLE
 	depends on TPLAYER
 	default y if TARGET_r6_perf1=y
@@ -484,6 +487,7 @@ endmenu
 
 choice
 prompt "Choose whether to use VIN ISP"
+	depends on PACKAGE_libcedarx
 	default TR_NO_USE_VIN_ISP
 	help
 		Choose whether to compile VIN ISP.
@@ -496,6 +500,7 @@ endchoice
 
 choice
 prompt "Choose whether to use playready"
+	depends on PACKAGE_libcedarx
 	default CEDARX_NO_USE_PLAYREADY
 	help
 		Choose whether to use playready.

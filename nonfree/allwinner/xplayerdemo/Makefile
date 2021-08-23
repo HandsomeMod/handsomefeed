@@ -12,8 +12,8 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   SUBMENU:=tina_multimedia_demo
-  SECTION:=utils
-  CATEGORY:=Allwinner
+  SECTION:=display-frameworks
+  CATEGORY:=Display Frameworks
   TITLE:=use xplayerdemo in tina_multimedia
   DEPENDS:=@TARGET_sunxi +libcedarx
 endef

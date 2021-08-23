@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2020 - 2021 HandsomeMod Project
+# Copyright (C) 2020-2021 HandsomeMod Project
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -8,22 +8,24 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=rlottie
-PKG_VERSION:=2021-2-3
+PKG_VERSION:=2021-8-21
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/HandsomeYingyan/rlottie.git
-PKG_SOURCE_VERSION:= 51102e9708aea4a203d66fbd958c9fdab2d085f9
-PKG_MIRROR_HASH:= 0bce9482acaa6ecfc612bb7de8493075f7f2fc7f2058567624bb6ac2f03c40d3
+PKG_SOURCE_URL:=https://github.com/Samsung/rlottie.git
+PKG_SOURCE_VERSION:= 327fb7dbaad225555d5ca567b9adee9ce5f879f4
+#PKG_MIRROR_HASH:= 0bce9482acaa6ecfc612bb7de8493075f7f2fc7f2058567624bb6ac2f03c40d3
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+
 
 PKG_MAINTAINER:=HandsomeYingyan <handsomeyingyan@gmail.com>
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
 
+PKG_BUILD_DEPENDS:=meson/host
 PKG_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
-include $(INCLUDE_DIR)/cmake.mk
+include $(TOPDIR)/feeds/packages/devel/meson/meson.mk
 
 
 define Package/rlottie
@@ -33,6 +35,10 @@ define Package/rlottie
   URL:=https://github.com/Samsung/rlottie
   DEPENDS:=+libstdcpp +libpng
 endef
+
+TARGET_CFLAGS+=-I$(STAGING_DIR)/usr/include
+LDFLAGS+=-L$(STAGING_DIR)/usr/lib/
+
 
 define Package/rlottie/description
   rlottie is a platform independent library for rendering vector based animations and art in realtime.

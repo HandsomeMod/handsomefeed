@@ -30,8 +30,8 @@ endif
 #end config the kernel version
 
 define Package/$(PKG_NAME)
-  SECTION:=utils
-  CATEGORY:=Allwinner
+  SECTION:=display-frameworks
+  CATEGORY:=Display Frameworks
   TITLE:=unit api for Allwinner
   MENU:=1
   DEPENDS:=@TARGET_sunxi

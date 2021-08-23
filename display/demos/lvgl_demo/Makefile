@@ -1,5 +1,5 @@
-# Copyright (C) 2020 HandsomeMod Project
 #
+# Copyright (C) 2020-2021 HandsomeMod Project
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -17,10 +17,9 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 # application package
 define Package/lvgl_example
-	SECTION:=lvgl
-	CATEGORY:=Handsomemod packages
-	SUBMENU:=Hmgl Core
-	TITLE:=Demo
+  	SECTION:=display-frameworks
+  	CATEGORY:=Display Frameworks
+	TITLE:= LVGL Demo
 	DEPENDS:= +tslib
 endef
 

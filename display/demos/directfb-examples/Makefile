@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2020 HandsomeMod Project
+# Copyright (C) 2020-2021 HandsomeMod Project
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -21,8 +21,8 @@ PKG_INSTALL:=1
 include $(INCLUDE_DIR)/package.mk
 
 define Package/directfb-examples
-  SECTION:=utils
-  CATEGORY:=Utilities
+  SECTION:=display-frameworks
+  CATEGORY:=Display Frameworks
   TITLE:=directfb examples
   DEPENDS:=+directfb
 endef

@@ -17,9 +17,8 @@ PKG_RELEASE:=1
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)/Default
-	SECTION:=libs
-	CATEGORY:=Libraries
-	SUBMENU:=GPU Libraries
+  	SECTION:=display-frameworks
+  	CATEGORY:=Display Frameworks
 	DEPENDS:= @TARGET_sunxi
 endef
 

@@ -1,7 +1,9 @@
 #
-# Copyright (C) 2020 HandsomeMod Project
+# Copyright (C) 2020-2021 HandsomeMod Project
 #
-#
+# This is free software, licensed under the GNU General Public License v2.
+# See /LICENSE for more information.
+
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:= opengles_demo
@@ -11,8 +13,8 @@ PKG_RELEASE:=1
 include $(INCLUDE_DIR)/package.mk
 
 define Package/opengles_demo
-  SECTION:=utils
-  CATEGORY:=Utilities
+  SECTION:=display-frameworks
+  CATEGORY:=Display Frameworks
   TITLE:=OpenGLES demo
   DEPENDS:= +mali400-um
 endef

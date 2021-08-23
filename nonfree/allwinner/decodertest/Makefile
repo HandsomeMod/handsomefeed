@@ -37,8 +37,8 @@ include $(INCLUDE_DIR)/package.mk
 # directive for the description below
 define Package/decodertest
   SUBMENU:=tina_multimedia_demo
-  SECTION:=utils
-  CATEGORY:=Allwinner
+  SECTION:=display-frameworks
+  CATEGORY:=Display Frameworks
   TITLE:=decode test
   DEPENDS:=@TARGET_sunxi +libcedarx
 endef

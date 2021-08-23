@@ -45,8 +45,9 @@ PKG_INSTALL:=1
 include $(INCLUDE_DIR)/package.mk
 
 define Package/wayland-protocols
-  SECTION:=gui
-  CATEGORY:=Wayland
+  SECTION:=display-frameworks
+  CATEGORY:=Display Frameworks
+  SUBMENU:=Wayland
   DEPENDS:=+wayland
   TITLE:=wayland-protocols
   MAINTAINER:=<wayland-devel@lists.freedesktop.org>

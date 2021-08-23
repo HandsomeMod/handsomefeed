@@ -1,3 +1,10 @@
+#
+# Copyright (C) 2020-2021 HandsomeMod Project
+#
+# This is free software, licensed under the GNU General Public License v2.
+# See /LICENSE for more information.
+#
+
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=SDL2
@@ -17,8 +24,8 @@ PKG_INSTALL:=1
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  SECTION:=multimedia
-  CATEGORY:=Multimedia
+  SECTION:=display-frameworks
+  CATEGORY:=Display Frameworks
   TITLE:=Simple DirectMedia Layer
   URL:=https://libsdl.org/
   DEPENDS:=+alsa-lib +directfb +tslib

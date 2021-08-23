@@ -48,8 +48,8 @@ include $(TOPDIR)/feeds/packages/devel/meson/meson.mk
 #include $(TOPDIR)/feeds/packages/lang/python/python3-package.mk
 
 define Package/mesa/Default
-  SECTION:=libs
-  CATEGORY:=Libraries
+  SECTION:=display-frameworks
+  CATEGORY:=Display Frameworks
   DEPENDS:=mesa
   TITLE:=Mesa DRI OpenGL library
   URL:=https://www.mesa3d.org

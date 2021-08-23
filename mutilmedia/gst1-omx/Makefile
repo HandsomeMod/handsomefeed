@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2020 - 2021 HandsomeMod Project
+# Copyright (C) 2020-2021 HandsomeMod Project
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -23,7 +23,7 @@ define Package/gst-omx
 	SECTION:=multimedia
 	CATEGORY:=Multimedia
 	TITLE:=gst openmax lib
-	DEPENDS:=+gstreamer1 +gstreamer1-plugins-base +libgst1video +libgst1allocators +libgst1audio +libgst1pbutils +libcedarx
+	DEPENDS:=@TARGET_sunxi +gstreamer1 +gstreamer1-plugins-base +libgst1video +libgst1allocators +libgst1audio +libgst1pbutils +libcedarx
 endef
 
 define Package/gst-omx/description

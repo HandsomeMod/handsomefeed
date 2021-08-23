@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2020 Handsomemod Project
+# Copyright (C) 2020-2021 Handsomemod Project
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -21,8 +21,8 @@ PKG_INSTALL:=1
 include $(INCLUDE_DIR)/package.mk
 
 define Package/tslib
-  SECTION:=libs
-  CATEGORY:=Libraries
+  SECTION:=display-frameworks
+  CATEGORY:=Display Frameworks
   TITLE:=tslib is an abstraction layer for touchscreen panel events
   URL:=https://github.com/kergoth/tslib
 endef

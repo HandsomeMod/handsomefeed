@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2010 OpenWrt.org
+# Copyright (C) 2020-2021 HandsomeMod Project
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -25,8 +25,8 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/directfb
     TITLE:=DirectFB
-    SECTION:=libs
-    CATEGORY:=Libraries
+    SECTION:=display-frameworks
+    CATEGORY:=Display Frameworks
     URL:=http://directfb.org
     DEPENDS:=+libstdcpp +tslib +libpng +libjpeg +libpthread +libfreetype +libsysfs +libwebp
 endef

@@ -47,8 +47,9 @@ include $(TOPDIR)/feeds/packages/devel/meson/meson.mk
 
 
 define Package/weston
-  SECTION:=gui
-  CATEGORY:=Wayland
+  SECTION:=display-frameworks
+  CATEGORY:=Display Frameworks
+  SUBMENU:=Wayland
   DEPENDS:=+libxkbcommon +libXcursor +pixman +libwebp +libpng +libjpeg +mtdev +libudev \
 	   +libcairo +libinput +pango +wayland +wayland-protocols \
 	  +WESTON_DRM:libdrm  +xkeyboard-config +WESTON_DBUS:dbus \

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2020 HandsomeMod Project
+# Copyright (C) 2020-2021 HandsomeMod Project
 #
 # It is licensed under the GPLv3 (see COPYING).
 #
@@ -25,8 +25,8 @@ define Package/$(PKG_NAME)/config
 endef
 
 define Package/glmark2
-  SECTION:=multimedia
-  CATEGORY:=Multimedia
+  SECTION:=display-frameworks
+  CATEGORY:=Display Frameworks
   TITLE:=glmark2 is an OpenGL 2.0 and ES 2.0 benchmark
   URL:=https://launchpad.net/glmark2/
   MAINTAINER:=
