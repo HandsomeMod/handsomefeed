@@ -37,6 +37,7 @@ define Package/qt5quick2-2d-sw-renderer-GLstubs
   SECTION:=display-frameworks
   CATEGORY:=Display Frameworks
   SUBMENU:=QT5
+  DEPENDS+=@BROKEN
   TITLE:=Dummy GL stubs
   URL:=http://qt.io
   MAINTAINER:=Mirko Vogt <mirko-openwrt@nanl.de>

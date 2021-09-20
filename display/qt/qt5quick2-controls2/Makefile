@@ -34,6 +34,7 @@ define Package/qt5quick2-controls2
   URL:=http://qt.io
   MAINTAINER:=Mirko Vogt <mirko-openwrt@nanl.de>
   DEPENDS:=+qt5quick2-quick
+  DEPENDS+=@BROKEN
 endef
 
 define Build/InstallDev

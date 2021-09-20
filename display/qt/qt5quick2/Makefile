@@ -32,7 +32,7 @@ define Package/qt5quick2/Default
   CATEGORY:=Display Frameworks
   SUBMENU:=QT5
   TITLE:=Qt5Quick2
-#  DEPENDS+=qt5quick2
+  DEPENDS+=@BROKEN
   URL:=http://qt.io
   MAINTAINER:=Mirko Vogt <mirko-openwrt@nanl.de>
 endef
