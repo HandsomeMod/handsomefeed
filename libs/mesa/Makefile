@@ -58,7 +58,7 @@ endef
 define Package/mesa
   $(call Package/mesa/Default)
   MENU:=1
-  DEPENDS:=+wayland +wayland-protocols +libdrm +libvdpau \
+  DEPENDS:=+PACKAGE_wayland:wayland +PACKAGE_wayland-protocols:wayland-protocols +libdrm +libvdpau \
   +libstdcpp +zlib +libexpat +libatomic +libxdamage +libxshmfence +libxxf86vm +xrandr \
   +PACKAGE_mesa-llvm:libva +PACKAGE_mesa-llvm:libllvm +PACKAGE_mesa-llvm:libelf1
 endef
@@ -203,10 +203,14 @@ else
 	MESON_ARGS+= -Dgallium-vc4-neon=disabled
 endif
 
-platforms := x11,wayland
+platforms := x11
+
+ifdef CONFIG_PACKAGE_wayland
+    MESON_ARGS += -Dwayland-scanner-path=$(STAGING_DIR_HOSTPKG)/bin/wayland-scanner
+    platforms := x11,wayland
+endif
 
 MESON_ARGS += \
-	-Dwayland-scanner-path=$(STAGING_DIR_HOSTPKG)/bin/wayland-scanner \
 	-Dgallium-omx=disabled \
 	-Dpower8=disabled \
 	-Dplatforms="$(platforms)" \
@@ -228,9 +232,7 @@ MESON_ARGS += \
 	-Dlmsensors=disabled \
 	-Dzstd=disabled
 
-# Only For HandsomeMod
-# Let llvm-config (host version) found things in target staging_dir
-MESON_EXTRA_BIN = llvm-config = '$(STAGING_DIR)/usr/bin/llvm-config'
+
 
 define Build/InstallDev
 	$(INSTALL_DIR) \
