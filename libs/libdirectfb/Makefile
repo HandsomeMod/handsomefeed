@@ -28,7 +28,7 @@ define Package/directfb
     SECTION:=display-frameworks
     CATEGORY:=Display Frameworks
     URL:=http://directfb.org
-    DEPENDS:=+libstdcpp +tslib +libpng +libjpeg +libpthread +libfreetype +libsysfs +libwebp
+    DEPENDS:=+libstdcpp +tslib +libpng +libjpeg +libpthread +libfreetype +libsysfs +libwebp +libtiff
 endef
 
 define Package/directfb/description
