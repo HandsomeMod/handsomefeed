@@ -39,12 +39,12 @@ endef
 MAKE_OPTS:= \
 	ARCH="$(LINUX_KARCH)" \
 	CROSS_COMPILE="$(TARGET_CROSS)" \
-	SUBDIRS="$(PKG_BUILD_DIR)"
+	SUBDIRS="$(LINUX_DIR)"
 
 define Build/Compile
-	$(MAKE) -C "$(LINUX_DIR)" \
+	$(MAKE) -C "$(PKG_BUILD_DIR)" \
 		$(MAKE_OPTS) \
-		modules
+		v4l2loopback
 endef
 
 $(eval $(call KernelPackage,$(PKG_NAME)))
