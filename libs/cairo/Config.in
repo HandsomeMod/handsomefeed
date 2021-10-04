@@ -2,7 +2,7 @@ if PACKAGE_libcairo
 
 config CAIRO_PS
 	bool
-	default n
+	default y
 	prompt "Enable cairo postscript support"
 	select PACKAGE_zlib
 	select CAIRO_PDF
@@ -19,22 +19,22 @@ config CAIRO_PNG
 
 config CAIRO_SCRIPT
 	bool
-	default n
+	default y
 	prompt "Enable script support"
 
 config CAIRO_SVG
 	bool
-	default n
+	default y
 	prompt "Enable cairo svg support"
 
 config CAIRO_TEE
 	bool
-	default n
+	default y
 	prompt "Enable cairo tee support"
 
 config CAIRO_XML
 	bool
-	default n
+	default y
 	prompt "Enable cairo xml support"
 
 endif

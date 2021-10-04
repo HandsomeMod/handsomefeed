@@ -62,7 +62,10 @@ $(call Package/cairo/Default)
 	  +PACKAGE_libfreetype:libfreetype \
 	  +PACKAGE_glib2:glib2 \
 	  +PACKAGE_liblzo:liblzo\
-	  +WESTON_OPENGL_ES:mesa
+	  +WESTON_OPENGL_ES:mesa \
+	  +PACKAGE_libx11:libx11 \
+	  +PACKAGE_libxext:libxext \
+	  +PACKAGE_libxrender:libxrender
   MENU:=1
 endef
 
@@ -119,8 +122,13 @@ endif
 #CAIRO_DEPENDENCIES += lzo
 #endif
 
-CAIRO_CONF_OPTS += --disable-xlib --disable-xcb --without-x  --disable-gobject 
+ifeq ($(CONFIG_PACKAGE_xorg-server),y)
+CAIRO_CONF_OPTS += --enable-xlib --enable-xcb --with-x
+CAIRO_CONF_OPTS += --enable-xlib-xrender
+else
+CAIRO_CONF_OPTS += --disable-xlib --disable-xcb --without-x
 CAIRO_CONF_OPTS += --disable-xlib-xrender
+endif
 
 CAIRO_DEPENDENCIES += libdirectfb
 ifeq ($(CONFIG_CAIRO_PS),y)
