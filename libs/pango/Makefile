@@ -33,7 +33,7 @@ define Package/pango
   TITLE:=Text layout and rendering library
   DEPENDS:=+libcairo +glib2 +fontconfig +libfreetype \
 	  +harfbuzz +fontconfig \
-	  +PACKAGE_libx11:libx11 +PACKAGE_libxft:libxft + PACKAGE_libxrender:libxrender
+	  +PACKAGE_libx11:libx11 +PACKAGE_libxft:libxft +PACKAGE_libxrender:libxrender
   URL:=http://www.pango.org/
 endef
 
