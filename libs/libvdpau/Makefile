@@ -15,7 +15,7 @@ PKG_SOURCE_URL:=https://gitlab.freedesktop.org/vdpau/libvdpau/-/archive/$(PKG_VE
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_HASH:=b5a52eeac9417edbc396f26c40591ba5df0cd18285f68d84614ef8f06196e50e
 
-PKG_BUILD_DEPENDS:=xproto
+PKG_BUILD_DEPENDS:=xorgproto
 PKG_INSTALL:=1
 PKG_BUILD_DEPENDS+= meson/host
 

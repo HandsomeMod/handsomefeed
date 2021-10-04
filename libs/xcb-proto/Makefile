@@ -15,7 +15,7 @@ PKG_SOURCE_URL:=https://xorg.freedesktop.org/archive/individual/proto/
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_HASH:=f04add9a972ac334ea11d9d7eb4fc7f8883835da3e4859c9afa971efdf57fcc3
 
-PKG_BUILD_DEPENDS:=python3 xproto
+PKG_BUILD_DEPENDS:=python3 xorgproto
 PKG_BUILD_PARALLEL:=1
 PKG_INSTALL:=1
 

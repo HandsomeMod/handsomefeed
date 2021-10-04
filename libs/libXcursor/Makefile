@@ -18,7 +18,7 @@ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_HASH:=ad5b2574fccaa4c3fa67b9874fbed863d29ad230c784e9a08b20692418f6a1f8
 PKG_FIXUP:=libtool
 PKG_INSTALL:=1
-PKG_BUILD_DEPENDS:= xproto
+PKG_BUILD_DEPENDS:= xorgproto
 
 include $(INCLUDE_DIR)/package.mk
 

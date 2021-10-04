@@ -16,8 +16,8 @@ PKG_SOURCE_URL:=https://www.x.org/releases/individual/lib/
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_HASH:=2cfcce810ddd48f2e5dc658d28c1808e86dcf303eaff16728b9aa3dbc0092079
 
-PKG_BUILD_DEPENDS:=util-macros xproto font-util
-HOST_BUILD_DEPENDS:=xproto/host util-macros/host
+PKG_BUILD_DEPENDS:=util-macros xorgproto font-util
+HOST_BUILD_DEPENDS:=xorgproto/host util-macros/host
 HOST_BUILD_PARALLEL:=1
 PKG_BUILD_PARALLEL:=1
 PKG_INSTALL:=1

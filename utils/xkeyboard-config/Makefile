@@ -15,7 +15,7 @@ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=http://www.x.org/releases/individual/data/xkeyboard-config/
 PKG_HASH:=da44181f2c8828789c720decf7d13acb3c3950e2a040af5132f50f04bb6aada3
 PKG_INSTALL:=1
-PKG_BUILD_DEPENDS:= intltool/host xproto libx11
+PKG_BUILD_DEPENDS:= intltool/host xorgproto libx11
 
 include $(INCLUDE_DIR)/package.mk
 

@@ -16,7 +16,7 @@ PKG_SOURCE_URL:=https://www.x.org/releases/individual/lib/
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_HASH:=20c23101d63234ee5f6d696dfa069b29c6c58e39eff433bcd7705b50b3ffa214
 
-PKG_BUILD_DEPENDS:=xorgproto xproto
+PKG_BUILD_DEPENDS:=xorgproto
 PKG_BUILD_PARALLEL:=1
 PKG_INSTALL:=1
 
