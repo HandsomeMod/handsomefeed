@@ -76,6 +76,7 @@ MESON_ARGS += \
 	-Dcrypto=gnutls \
 	-Dmodem_manager=false \
 	-Dovs=false \
+	-Dppp=false \
 	-Dlibpsl=false \
 	-Dvapi=false
 
