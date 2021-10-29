@@ -31,7 +31,7 @@ define Package/gtk3
   CATEGORY:=Libraries
   DEPENDS:=+wayland +wayland-protocols +libxkbcommon +libxmu +libxaw +libxpm +libtiff +zlib \
 	    +libexpat +pango +libxrandr +libxinerama +libxfixes +libxdamage \
-	    +libepoxy +fontconfig +libcairo +atk +gdk-pixbuf +libxcomposite +libxcursor \
+	    +libepoxy +libcairo +atk +gdk-pixbuf +libxcomposite +libxcursor \
 		+hicolor-icon-theme +shared-mime-info
   TITLE:=The GTK plus Toolkit (v3)
   URL:=https://www.gtk.org/
