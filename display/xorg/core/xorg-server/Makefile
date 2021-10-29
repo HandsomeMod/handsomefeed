@@ -34,7 +34,7 @@ define Package/xorg-server
 	+xcb-util-image +xcb-util-renderutil +xcb-util-keysyms +acpid \
 	+libudev +kbd +hicolor-icon-theme +libbsd +libxres +libfs \
 	+libxcomposite +xcb-util-cursor +iceauth +luit +sessreg +xcursorgen \
-	+libxaw +libxpm +libxi +libnettle +dbus +libdrm
+	+libxaw +libxpm +libxi +libnettle +dbus
   TITLE:=X.Org X servers
   URL:=http://xorg.freedesktop.org/
 endef
