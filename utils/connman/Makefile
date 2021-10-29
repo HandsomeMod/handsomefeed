@@ -42,13 +42,16 @@ endef
 
 CONFIGURE_ARGS +=  \
 	--with-dbusconfdir=/etc \
-	--enable-debug \
+	--disable-debug \
 	--with-firewall=iptables \
 	--enable-wifi \
 	--enable-wireguard \
 	--enable-wispr \
 	--enable-client \
-	--enable-ethernet 
+	--enable-ethernet \
+	--disable-ofono \
+	--disable-neard \
+	--disable-bluetooth
 
 #todo ofono bluetooth neard
 
