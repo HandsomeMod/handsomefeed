@@ -29,8 +29,8 @@ include $(INCLUDE_DIR)/package.mk
 define Package/gtk3
   SECTION:=libs
   CATEGORY:=Libraries
-  DEPENDS:=+libx11 +libxau +libxext +libxmu +libxaw +libxpm +libtiff +zlib \
-	    +libexpat +pango +libxrandr +libxinerama +libxi +libxfixes +libxdamage \
+  DEPENDS:=+wayland +wayland-protocols +libxkbcommon +libxmu +libxaw +libxpm +libtiff +zlib \
+	    +libexpat +pango +libxrandr +libxinerama +libxfixes +libxdamage \
 	    +libepoxy +fontconfig +libcairo +atk +gdk-pixbuf +libxcomposite +libxcursor \
 		+hicolor-icon-theme +shared-mime-info
   TITLE:=The GTK plus Toolkit (v3)
@@ -46,11 +46,13 @@ TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed
 
 CONFIGURE_ARGS += \
   --prefix=/usr \
-  --enable-x11-backend \
+  --enable-wayland-backend \
   --enable-explicit-deps=no \
   --disable-doc \
   --disable-docs \
   --disable-gtk-doc \
+  --disable-glibtest \
+  --enable-explicit-deps=no \
   --disable-gtk-doc-html \
   --disable-documentation \
   --disable-dependency-tracking \
@@ -59,8 +61,7 @@ CONFIGURE_ARGS += \
   --disable-papi \
   --disable-cups \
   --disable-glibtest \
-  --x-includes=$(STAGING_DIR)/usr/include/X11 \
-  --x-libraries=$(STAGING_DIR)/usr/lib \
+  --disable-x11-backend \
   --enable-xdamage \
   --enable-xcomposite \
   --enable-xrandr \
