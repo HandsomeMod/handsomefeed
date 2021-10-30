@@ -1,5 +1,5 @@
 # 
-# Copyright (C) 2020 - 2021 HandsomeMod Project
+# Copyright (C) 2020-2021 HandsomeMod Project
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -81,6 +81,7 @@ PKG_CMAKE_OPTS_COMMON= \
 	-DLLVM_INCLUDE_EXAMPLES=OFF \
 	-DLLVM_INCLUDE_BENCHMARKS=OFF \
 	-DLLVM_ENABLE_FFI=OFF \
+	-DBUILD_SHARED_LIBS=OFF \
 	-DLLVM_ENABLE_WERROR=OFF \
 	-DLLVM_ENABLE_LLD=OFF \
 	-DCMAKE_EXE_LINKER_FLAGS="-Wl,--reduce-memory-overheads -Wl,--hash-size=1021 " \
@@ -93,6 +94,9 @@ CMAKE_OPTIONS += \
 	$(PKG_CMAKE_OPTS_COMMON) \
 	-DLLVM_BUILD_TOOLS=ON \
 	-DLLVM_BUILD_UTILS=OFF \
+	-DLLVM_LINK_LLVM_DYLIB=ON \
+	-DBUILD_SHARED_LIBS=OFF \
+	-DLLVM_INSTALL_TOOLCHAIN_ONLY=OFF \
 	-DCMAKE_CROSSCOMPILING=1 \
 	-DLLVM_INCLUDE_UTILS=OFF \
 	-DLLVM_INSTALL_UTILS=OFF \
