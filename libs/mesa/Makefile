@@ -69,7 +69,7 @@ endef
 
 define Package/mesa-llvm
   $(call Package/mesa/Default)
-  DEPENDS+=@TARGET_x86
+  DEPENDS+=@TARGET_x86 @BROKEN
   TITLE:=MESA LLVM support
 endef
 

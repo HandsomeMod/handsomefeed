@@ -27,7 +27,7 @@ include $(INCLUDE_DIR)/cmake.mk
 define Package/llvm
   SECTION:=devel
   CATEGORY:=Development
-  DEPENDS:=+libllvm +libstdcpp
+  DEPENDS:=+libllvm +libstdcpp @BROKEN
   TITLE:=low level virtual machine compiler system
   URL:=http://llvm.org/
 endef
@@ -35,7 +35,7 @@ endef
 define Package/libllvm
   SECTION:=libs
   CATEGORY:=Libraries
-  DEPENDS:=+libffi +libstdcpp
+  DEPENDS:=+libffi +libstdcpp @BROKEN
   TITLE:=low level virtual machine shared library
   URL:=http://llvm.org/
 endef
