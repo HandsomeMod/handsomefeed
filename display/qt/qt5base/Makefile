@@ -92,7 +92,13 @@ endef
 define Package/qt5base-gl
   $(call Package/qt5base/Default)
   TITLE+=gl
-  DEPENDS+=+qt5base-core +qt5base-gui +qt5base-widgets @BROKEN
+  DEPENDS+=+qt5base-core +qt5base-gui +qt5base-widgets +mesa
+endef
+
+define Package/qt5base-wayland
+  $(call Package/qt5base/Default)
+  TITLE+=wayland
+  DEPENDS+=+qt5base-core +wayland
 endef
 
 define Package/qt5base-core
@@ -243,6 +249,12 @@ define Package/qt5base-plugin-platforms-offscreen
   DEPENDS+=+qt5base-core +qt5base-gui +libfreetype +fontconfig
 endef
 
+define Package/qt5base-plugin-platforms-wayland
+  $(call Package/qt5base/Default)
+  TITLE+=platform wayland (plugin)
+  DEPENDS+=+qt5base-core +qt5base-gui +qt5base-wayland
+endef
+
 define Package/qt5base-plugin-platforms-vnc
   $(call Package/qt5base/Default)
   TITLE+=platform vnc (plugin)
@@ -363,8 +375,8 @@ define Build/Configure
 			--freetype=system \
 			--harfbuzz=no \
 			--gtk=no \
-			--opengl=no \
-			--opengles3=no \
+			--opengl=$(if $(CONFIG_PACKAGE_qt5base-gl),yes,) \
+			--opengles3=$(if $(CONFIG_PACKAGE_qt5base-gl),yes,) \
 			--egl=no \
 			--xcb-xlib=no \
 			--qpa=$(if $(CONFIG_PACKAGE_qt5base-plugin-platforms-linuxfb),linuxfb,) \
@@ -541,6 +553,11 @@ define Package/qt5base-gl/install
 	$(call Build/Install/Libs,$(1),libQt5OpenGL)
 endef
 
+define Package/qt5base-wayland/install
+	$(call Build/Install/Libs,$(1),libQt5WaylandClient)
+	$(call Build/Install/Libs,$(1),libQt5WaylandCompositor)
+endef
+
 define Package/qt5base-gui/install
 	$(call Build/Install/Libs,$(1),libQt5Gui)
 endef
@@ -617,6 +634,10 @@ define Package/qt5base-plugin-platforms-vnc/install
 	$(call Build/Install/Plugins,$(1),platforms,libqvnc)
 endef
 
+define Package/qt5base-plugin-platforms-wayland/install
+	$(call Build/Install/Plugins,$(1),platforms,libqwayland-generic)
+endef
+
 #define Package/qt5base-plugin-platforms-eglfs/install
 #	$(call Build/Install/Plugins,$(1),platforms,libqeglfs)
 #endef
@@ -645,6 +666,7 @@ $(eval $(call BuildPackage,qt5base-concurrent))
 $(eval $(call BuildPackage,qt5base-core))
 $(eval $(call BuildPackage,qt5base-gui))
 $(eval $(call BuildPackage,qt5base-gl))
+$(eval $(call BuildPackage,qt5base-wayland))
 $(eval $(call BuildPackage,qt5base-network))
 $(eval $(call BuildPackage,qt5base-printSupport))
 $(eval $(call BuildPackage,qt5base-sql))
@@ -667,6 +689,7 @@ $(eval $(call BuildPackage,qt5base-plugin-platforms-linuxfb))
 $(eval $(call BuildPackage,qt5base-plugin-platforms-minimal))
 $(eval $(call BuildPackage,qt5base-plugin-platforms-offscreen))
 $(eval $(call BuildPackage,qt5base-plugin-platforms-vnc))
+$(eval $(call BuildPackage,qt5base-plugin-platforms-wayland))
 #$(eval $(call BuildPackage,qt5base-plugin-sqldrivers-sqlite))
 $(eval $(call BuildPackage,qt5base-examples))
 $(eval $(call HostBuild))
