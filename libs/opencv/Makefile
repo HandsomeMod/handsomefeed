@@ -1,7 +1,7 @@
 #
 # Copyright (C) 2013-2014 wrtnode.com
 # Copyright (C) 2015-2016 OpenWrt.org
-# Copyright (C) 2020 HandsomeMod Project
+# Copyright (C) 2020-2021 HandsomeMod Project
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -11,12 +11,12 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=opencv
 #use stable one for now
-PKG_VERSION:=3.4.11
+PKG_VERSION:=3.4.15
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/opencv/opencv
 PKG_SOURCE_VERSION:=$(PKG_VERSION)
-PKG_MIRROR_HASH:=10898a0268d8f8cbaf0354ddd1d9de6abaac84e3d9a6c9754f56a0aa3383d73b
+PKG_MIRROR_HASH:=b1e8470b18e9e793bf70b4ae051bbc9bf81fa45f8cbfee1e6c88858c90be8ff7
 
 PKG_MAINTAINER:=HandsomeYingyan
 PKG_LICENSE:=BSD-3-Clause
