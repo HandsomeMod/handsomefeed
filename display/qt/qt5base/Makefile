@@ -98,7 +98,7 @@ endef
 define Package/qt5base-wayland
   $(call Package/qt5base/Default)
   TITLE+=wayland
-  DEPENDS+=+qt5base-core +wayland
+  DEPENDS+=+qt5base-core +wayland @BROKEN
 endef
 
 define Package/qt5base-core
@@ -252,7 +252,7 @@ endef
 define Package/qt5base-plugin-platforms-wayland
   $(call Package/qt5base/Default)
   TITLE+=platform wayland (plugin)
-  DEPENDS+=+qt5base-core +qt5base-gui +qt5base-wayland
+  DEPENDS+=+qt5base-core +qt5base-gui +qt5base-wayland @BROKEN
 endef
 
 define Package/qt5base-plugin-platforms-vnc
