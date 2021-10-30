@@ -45,7 +45,7 @@ GPU_LIB_DIR:=$(GPU_TYPE)/$(WINDOW_SYSTEM_TYPE)/$(CONFIG_LIBC)/lib
 define Package/mali400-um
 	$(Package/$(PKG_NAME)/Default)
 	TITLE:=Mali-400 userspace libraries
-	DEPENDS:=+kmod-sunxi-mali +libdrm
+	DEPENDS:=+kmod-video-mali +libdrm
 endef
 
 define Build/InstallDev
