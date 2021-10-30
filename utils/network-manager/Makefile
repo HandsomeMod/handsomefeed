@@ -76,7 +76,7 @@ MESON_ARGS += \
 	-Dcrypto=gnutls \
 	-Dmodem_manager=false \
 	-Dovs=false \
-	-Dppp=false \
+	-Dppp=true \
 	-Dlibpsl=false \
 	-Dvapi=false
 
@@ -127,8 +127,8 @@ define Package/network-manager/install
 	$(INSTALL_DIR) $(1)/usr/lib/NetworkManager/$(PKG_VERSION).$(PKG_RELEASE)
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/NetworkManager/$(PKG_VERSION).$(PKG_RELEASE)/* $(1)/usr/lib/NetworkManager/$(PKG_VERSION).$(PKG_RELEASE)
 
-#	$(INSTALL_DIR) $(1)/usr/lib/pppd
-#	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pppd/* $(1)/usr/lib/pppd
+	$(INSTALL_DIR) $(1)/usr/lib/pppd
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pppd/* $(1)/usr/lib/pppd
 	
 	$(INSTALL_DIR) $(1)/usr/share/bash-completion/completions
 	$(CP) $(PKG_INSTALL_DIR)/usr/share/bash-completion/completions/* $(1)/usr/lib/pppd
