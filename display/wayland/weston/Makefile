@@ -79,6 +79,7 @@ MESON_ARGS += \
 	-Dimage-webp=true \
 	-Dcolor-management-lcms=false \
 	-Dpipewire=false \
+	-Drenderer-gl=true \
 	-Dsimple-dmabuf-drm=auto \
 	-Dxwayland=false
 
