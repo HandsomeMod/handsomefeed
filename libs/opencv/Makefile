@@ -29,8 +29,17 @@ PKG_USE_MIPS16:=0
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
+include $(TOPDIR)/feeds/packages/lang/python/python3-package.mk
 
-define Package/opencv/Default/description
+define Package/opencv
+  SECTION:=libs
+  CATEGORY:=Libraries
+  TITLE:=OpenCV
+  URL:=https://opencv.org/
+  DEPENDS:=+libpthread +librt +libatomic +libstdcpp +zlib +libjpeg +libwebp
+endef
+
+define Package/opencv/description
  OpenCV (Open Source Computer Vision Library) is an open source computer
  vision and machine learning software library. OpenCV was built to provide
  a common infrastructure for computer vision applications and to accelerate
@@ -39,12 +48,17 @@ define Package/opencv/Default/description
  and modify the code.
 endef
 
-define Package/opencv
-  SECTION:=libs
-  CATEGORY:=Libraries
-  TITLE:=OpenCV
+define Package/python3-opencv
+  TITLE:=Opencv Python bindings
+  SECTION:=lang
+  CATEGORY:=Languages
+  SUBMENU:=Python
   URL:=https://opencv.org/
-  DEPENDS:=+libpthread +librt +libatomic +libstdcpp +zlib +libjpeg +libwebp
+  DEPENDS:=+opencv +python3 +python3-numpy
+endef
+
+define Package/python3-opencv/description
+ Opencv Python bindings
 endef
 
 CMAKE_OPTIONS += \
@@ -157,9 +171,22 @@ CMAKE_OPTIONS += \
 
 TARGET_LDFLAGS += -latomic
 
+ifeq ($(CONFIG_PACKAGE_python3-opencv),y)
+	CMAKE_OPTIONS += \
+	-DBUILD_opencv_python2=OFF \
+	-DBUILD_opencv_python3=ON
+endif
+
 define Package/opencv/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libopencv* $(1)/usr/lib/
 endef
 
+define Package/python3-opencv/install
+	$(INSTALL_DIR) $(1)/usr/lib/python$(PYTHON3_VERSION)/site-packages
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/python$(PYTHON3_VERSION)/site-packages/* \
+		$(1)/usr/lib/python$(PYTHON3_VERSION)/site-packages/
+endef
+
 $(eval $(call BuildPackage,opencv))
+$(eval $(call BuildPackage,python3-opencv))
