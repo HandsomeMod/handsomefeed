@@ -50,7 +50,7 @@ define Package/weston
   SECTION:=display-frameworks
   CATEGORY:=Display Frameworks
   SUBMENU:=Wayland
-  DEPENDS:=+libxkbcommon +libXcursor +pixman +libwebp +libpng +libjpeg +mtdev +libudev \
+  DEPENDS:=+libxkbcommon +libxcursor +pixman +libwebp +libpng +libjpeg +mtdev +libudev \
 	   +libcairo +libinput +pango +wayland +wayland-protocols \
 	  +WESTON_DRM:libdrm  +xkeyboard-config +WESTON_DBUS:dbus \
 	  +WESTON_LAUNCH:libpam +WESTON_LIBXML2:libxml2 +WESTON_OPENGL_ES:mesa \
