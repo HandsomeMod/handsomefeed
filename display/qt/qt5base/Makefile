@@ -376,7 +376,7 @@ define Build/Configure
 			--harfbuzz=no \
 			--gtk=no \
 			--opengl=$(if $(CONFIG_PACKAGE_qt5base-gl),yes,) \
-			--opengles3=$(if $(CONFIG_PACKAGE_qt5base-gl),yes,) \
+			--opengles3=no \
 			--egl=no \
 			--xcb-xlib=no \
 			--qpa=$(if $(CONFIG_PACKAGE_qt5base-plugin-platforms-linuxfb),linuxfb,) \
