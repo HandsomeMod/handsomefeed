@@ -53,7 +53,7 @@ endef
 CONFIGURE_ARGS += \
 	--prefix=/usr --exec-prefix= --sysconfdir=/etc \
 	--libexecdir=/lib/udev --sbindir=/sbin \
-	--disable-hwdb --disable-introspection --disable-manpages \
+	--enable-hwdb --disable-introspection --disable-manpages \
 	--disable-selinux  --with-rootrundir=/tmp/run \
 	$(if $(CONFIG_EUDEV_EXTRA_largefile),--enable-largefile,--disable-largefile) \
 	$(if $(CONFIG_EUDEV_EXTRA_blkid),--enable-blkid,--disable-blkid) \
@@ -109,15 +109,22 @@ define Package/eudev/install
 			60-block.rules \
 			60-drm.rules \
 			60-evdev.rules \
+			60-input-id.rules \
+			60-sensor.rules \
 			60-persistent-alsa.rules \
 			60-persistent-storage-tape.rules \
 			60-serial.rules \
 			64-btrfs.rules \
 			70-mouse.rules \
+			70-joystick.rules \
+			70-touchpad.rules \
 			75-net-description.rules \
 			78-sound-card.rules \
 			80-net-name-slot.rules) \
 		$(1)/lib/udev/rules.d
+
+	$(INSTALL_DIR) $(1)/etc/udev/hwdb.d
+	$(CP) $(PKG_INSTALL_DIR)/etc/udev/hwdb.d/* $(1)/etc/udev/hwdb.d
 
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/lib/libudev.so* $(1)/usr/lib
