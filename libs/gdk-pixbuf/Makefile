@@ -17,11 +17,11 @@ PKG_SOURCE_URL:=https://download.gnome.org/sources/$(PKG_NAME)/$(_PKG_VERSION)
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_HASH:=fe9c5dd88f486194ea2bc09b8814c1ed895bb6c530f37cbbf259757c4e482e4d
 
-
 PKG_BUILD_PARALLEL:=1
 PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/host-build.mk
 include $(TOPDIR)/feeds/packages/devel/meson/meson.mk
 
 define Package/gdk-pixbuf
@@ -60,8 +60,15 @@ define Package/gdk-pixbuf/install
 	  $(1)/usr/lib
 
 	$(CP) \
-	  $(PKG_INSTALL_DIR)/usr/lib/*.so* \
+	  $(PKG_INSTALL_DIR)/usr/lib/* \
 	  $(1)/usr/lib/
+
+	# pkgconfig is trash for target
+	rm -r $(1)/usr/lib/pkgconfig
+
+	# ugly hack to avoid host build gdk-pixbuf
+	$(INSTALL_DIR) $(1)/usr/lib/gdk-pixbuf-2.0/2.10.0/
+	$(CP) ./files/loaders.cache $(1)/usr/lib/gdk-pixbuf-2.0/2.10.0/
 
 	$(INSTALL_DIR) \
 	  $(1)/usr/share
@@ -78,4 +85,5 @@ define Package/gdk-pixbuf/install
 	  $(1)/usr/bin/
 endef
 
+$(eval $(call HostBuild))
 $(eval $(call BuildPackage,gdk-pixbuf))
