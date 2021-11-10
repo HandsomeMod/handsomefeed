@@ -16,7 +16,7 @@ PKG_VERSION:=3.4.15
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/opencv/opencv
 PKG_SOURCE_VERSION:=$(PKG_VERSION)
-PKG_MIRROR_HASH:=b1e8470b18e9e793bf70b4ae051bbc9bf81fa45f8cbfee1e6c88858c90be8ff7
+PKG_MIRROR_HASH:=aa1a80b080a2d32b020075800611f945ef7ad867301b926cdf35541deda2f53d
 
 PKG_MAINTAINER:=HandsomeYingyan
 PKG_LICENSE:=BSD-3-Clause
@@ -26,10 +26,11 @@ CMAKE_INSTALL:=1
 CMAKE_BINARY_SUBDIR:=build
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
+PYTHON3_PKG_BUILD:=0
 
 include $(INCLUDE_DIR)/package.mk
-include $(INCLUDE_DIR)/cmake.mk
 include $(TOPDIR)/feeds/packages/lang/python/python3-package.mk
+include $(INCLUDE_DIR)/cmake.mk
 
 define Package/opencv
   SECTION:=libs
@@ -116,6 +117,7 @@ CMAKE_OPTIONS += \
 	-DWITH_GDAL=OFF \
 	-DWITH_GPHOTO2=OFF \
 	-DWITH_GSTREAMER_0_10=OFF \
+	-DWITH_GSTREAMER=OFF \
 	-DWITH_LAPACK=OFF \
 	-DWITH_MATLAB=OFF \
 	-DWITH_OPENCL=OFF \
@@ -145,7 +147,6 @@ CMAKE_OPTIONS += \
 	-DWITH_EIGEN=OFF \
 	-DWITH_GDAL=OFF \
 	-DWITH_GPHOTO2=OFF \
-	-DWITH_GSTREAMER_0_10=OFF \
 	-DWITH_LAPACK=OFF \
 	-DWITH_MATLAB=OFF \
 	-DWITH_OPENCL=OFF \
@@ -174,7 +175,10 @@ TARGET_LDFLAGS += -latomic
 ifeq ($(CONFIG_PACKAGE_python3-opencv),y)
 	CMAKE_OPTIONS += \
 	-DBUILD_opencv_python2=OFF \
-	-DBUILD_opencv_python3=ON
+	-DBUILD_opencv_python3=ON \
+	-DPYTHON3_NUMPY_INCLUDE_DIRS=$(STAGING_DIR)/$(PYTHON3_PKG_DIR)/numpy/core/include \
+	-DPYTHON3_INCLUDE_PATH=$(PYTHON3_INC_DIR) \
+	-DPYTHON3_NUMPY_VERSION=1.20.1
 endif
 
 define Package/opencv/install
