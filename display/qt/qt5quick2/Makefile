@@ -10,9 +10,9 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=qt5quick2
-PKG_VERSION:=5.15.0
+PKG_VERSION:=5.15.2
 PKG_RELEASE:=1
-PKG_HASH:=9c3c93fb7d340b2f7d738d12408c047318c78973cb45bfc5ff6b3a57e1fef699
+PKG_HASH:=c600d09716940f75d684f61c5bdaced797f623a86db1627da599027f6c635651
 
 PKG_SYS_NAME:=qtdeclarative-everywhere-src-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_SYS_NAME).tar.xz
@@ -32,7 +32,7 @@ define Package/qt5quick2/Default
   CATEGORY:=Display Frameworks
   SUBMENU:=QT5
   TITLE:=Qt5Quick2
-  DEPENDS+=@BROKEN
+#  DEPENDS+=@BROKEN
   URL:=http://qt.io
   MAINTAINER:=Mirko Vogt <mirko-openwrt@nanl.de>
 endef

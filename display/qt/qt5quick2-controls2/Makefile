@@ -10,9 +10,9 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=qt5quick2-controls2
-PKG_VERSION:=5.15.0
+PKG_VERSION:=5.15.2
 PKG_RELEASE:=1
-PKG_HASH:=839abda9b58cd8656b2e5f46afbb484e63df466481ace43318c4c2022684648f
+PKG_HASH:=671b6ce5f4b8ecc94db622d5d5fb29ef4ff92819be08e5ea55bfcab579de8919
 
 PKG_SYS_NAME:=qtquickcontrols2-everywhere-src-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_SYS_NAME).tar.xz
@@ -34,7 +34,7 @@ define Package/qt5quick2-controls2
   URL:=http://qt.io
   MAINTAINER:=Mirko Vogt <mirko-openwrt@nanl.de>
   DEPENDS:=+qt5quick2-quick
-  DEPENDS+=@BROKEN
+#  DEPENDS+=@BROKEN
 endef
 
 define Build/InstallDev

@@ -10,9 +10,9 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=qt5graphicaleffects
-PKG_VERSION:=5.15.0
+PKG_VERSION:=5.15.2
 PKG_RELEASE:=1
-PKG_HASH:=0d2ea4bc73b9df13a4b739dcbc1e3c7b298c7e682f7f9252b232e3bde7b63eda
+PKG_HASH:=ec8d67f64967d5046410490b549c576f9b9e8b47ec68594ae84aa8870173dfe4
 
 PKG_SYS_NAME:=qtgraphicaleffects-everywhere-src-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_SYS_NAME).tar.xz
@@ -34,7 +34,7 @@ define Package/qt5graphicaleffects
   TITLE:=qt5graphicaleffects
   URL:=http://qt.io
   MAINTAINER:=Mirko Vogt <mirko-openwrt@nanl.de>
-  DEPENDS:=+qt5quick2-quick @BROKEN # depends on GL support, but currently we only support software rendering
+  DEPENDS:=+qt5quick2-quick +qt5base-gl +mesa
 endef
 
 define Build/InstallDev

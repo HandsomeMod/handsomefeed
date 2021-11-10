@@ -14,9 +14,9 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=qt5base
-PKG_VERSION:=5.15.0
+PKG_VERSION:=5.15.2
 PKG_RELEASE:=1
-PKG_HASH:=9e7af10aece15fa9500369efde69cb220eee8ec3a6818afe01ce1e7d484824c5
+PKG_HASH:=909fad2591ee367993a75d7e2ea50ad4db332f05e1c38dd7a5a274e156a4e0f8
 
 PKG_SYS_NAME:=qtbase-everywhere-src-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_SYS_NAME).tar.xz
@@ -44,6 +44,9 @@ include $(INCLUDE_DIR)/host-build.mk
 include $(INCLUDE_DIR)/nls.mk
 include ./files/qmake.mk
 
+TARGET_LDFLAGS+=-Wl,-rpath-link=$(STAGING_DIR)/usr/lib,-rpath-link=$(PKG_BUILD_DIR)/lib
+TARGET_CFLAGS+=-I$(STAGING_DIR)/usr/include/freetype2 -I$(PKG_BUILD_DIR)/include
+
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_qt5base-plugin-imageformats-jpeg \
 	CONFIG_PACKAGE_qt5base-network \
@@ -53,10 +56,8 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_qt5base-examples \
 	CONFIG_PACKAGE_qt5base-plugin-platforms-minimal \
 	CONFIG_PACKAGE_qt5base-plugin-platforms-linuxfb \
-	CONFIG_PACKAGE_qt5base-plugin-input-libinput \
-#	CONFIG_PACKAGE_qt5base-plugin-imageformats-png \
-#	CONFIG_PACKAGE_qt5base-plugin-platforms-eglfs \
-#	CONFIG_PACKAGE_qt5base-plugin-platforms-minimalegl \
+	CONFIG_PACKAGE_qt5base-plugin-input-libinput
+#	CONFIG_PACKAGE_qt5base-plugin-imageformats-png
 
 # Do not use sstrip for QT5. When sstrip is used the QT5 plugin loading does
 # not work, because of QT''s internal elf parser, see
@@ -80,7 +81,7 @@ define Package/qt5base/Default
   SUBMENU:=QT5
   TITLE:=Qt5base
   URL:=http://qt.io
-  MAINTAINER:=Mirko Vogt <mirko-openwrt@nanl.de>
+  MAINTAINER:=HandsomeYingyan <handsomeyingyan@gmail.com>
 endef
 
 define Package/qt5base-concurrent
@@ -95,12 +96,6 @@ define Package/qt5base-gl
   DEPENDS+=+qt5base-core +qt5base-gui +qt5base-widgets +mesa
 endef
 
-define Package/qt5base-wayland
-  $(call Package/qt5base/Default)
-  TITLE+=wayland
-  DEPENDS+=+qt5base-core +wayland @BROKEN
-endef
-
 define Package/qt5base-core
   $(call Package/qt5base/Default)
   TITLE+=core
@@ -110,7 +105,7 @@ endef
 define Package/qt5base-gui
   $(call Package/qt5base/Default)
   TITLE+=gui
-  DEPENDS+=+qt5base-core +libpng +fontconfig +libfreetype
+  DEPENDS+=+qt5base-core +libpng +fontconfig +libfreetype +PACKAGE_qt5base-gl:mesa
 endef
 
 define Package/qt5base-network
@@ -128,7 +123,7 @@ endef
 define Package/qt5base-sql
   $(call Package/qt5base/Default)
   TITLE+=sql
-  DEPENDS+=+qt5base-core
+  DEPENDS+=+qt5base-core 
 endef
 
 define Package/qt5base-test
@@ -149,6 +144,12 @@ define Package/qt5base-xml
   DEPENDS+=+qt5base-core
 endef
 
+define Package/qt5base-dbus
+  $(call Package/qt5base/Default)
+  TITLE+=dbus
+  DEPENDS+=+qt5base-core +libdbus
+endef
+
 #### plugins
 
 ####### bearer
@@ -159,45 +160,51 @@ TITLE+=bearer (plugin)
   DEPENDS+=+qt5base-core +qt5base-network
 endef
 
-####### generic / input
+####### generic
 
 define Package/qt5base-plugin-input-libinput
   $(call Package/qt5base/Default)
   TITLE+=libinput (plugin)
-  DEPENDS+=+qt5base-core +qt5base-gui +libinput
+  DEPENDS+=+qt5base-core +qt5base-gui +libinput +PACKAGE_qt5base-plugin-input-tslib:tslib
+endef
+
+define Package/qt5base-plugin-input-tslib
+  $(call Package/qt5base/Default)
+  TITLE+=tslib (plugin)
+  DEPENDS+=+qt5base-core +qt5base-gui +tslib +libudev +PACKAGE_qt5base-plugin-input-libinput:libinput
 endef
 
 define Package/qt5base-plugin-input-evdevkeyboard
   $(call Package/qt5base/Default)
   TITLE+=evdev keyboard (plugin)
-  DEPENDS+=+qt5base-core +qt5base-gui +libudev +PACKAGE_qt5base-plugin-input-libinput:libinput
+  DEPENDS+=+qt5base-core +qt5base-gui +libudev +PACKAGE_qt5base-plugin-input-libinput:libinput +PACKAGE_qt5base-plugin-input-tslib:tslib
 endef
 
 define Package/qt5base-plugin-input-evdevmouse
   $(call Package/qt5base/Default)
   TITLE+=evdev mouse (plugin)
-  DEPENDS+=+qt5base-core +qt5base-gui +libudev +PACKAGE_qt5base-plugin-input-libinput:libinput
+  DEPENDS+=+qt5base-core +qt5base-gui +libudev +PACKAGE_qt5base-plugin-input-libinput:libinput +PACKAGE_qt5base-plugin-input-tslib:tslib
 endef
 
 define Package/qt5base-plugin-input-evdevtablet
   $(call Package/qt5base/Default)
   TITLE+=evdev tablet (plugin)
-  DEPENDS+=+qt5base-core +qt5base-gui +libudev +PACKAGE_qt5base-plugin-input-libinput:libinput
+  DEPENDS+=+qt5base-core +qt5base-gui +libudev +PACKAGE_qt5base-plugin-input-libinput:libinput +PACKAGE_qt5base-plugin-input-tslib:tslib
 endef
 
 define Package/qt5base-plugin-input-evdevtouch
   $(call Package/qt5base/Default)
   TITLE+=evdev touch (plugin)
-  DEPENDS+=+qt5base-core +qt5base-gui +libudev +PACKAGE_qt5base-plugin-input-libinput:libinput
+  DEPENDS+=+qt5base-core +qt5base-gui +libudev +PACKAGE_qt5base-plugin-input-libinput:libinput +PACKAGE_qt5base-plugin-input-tslib:tslib
 endef
 
 ####### imageformats
 
-#define Package/qt5base-plugin-imageformats-gif
-#  $(call Package/qt5base/Default)
-#TITLE+=imageformat gif (plugin)
-#  DEPENDS+=+qt5base-core +qt5base-gui
-#endef
+define Package/qt5base-plugin-imageformats-gif
+  $(call Package/qt5base/Default)
+TITLE+=imageformat gif (plugin)
+  DEPENDS+=+qt5base-core +qt5base-gui
+endef
 
 define Package/qt5base-plugin-imageformats-ico
   $(call Package/qt5base/Default)
@@ -211,30 +218,18 @@ define Package/qt5base-plugin-imageformats-jpeg
   DEPENDS+=+qt5base-core +qt5base-gui +libjpeg
 endef
 
-#define Package/qt5base-plugin-imageformats-png
-#  $(call Package/qt5base/Default)
-#  TITLE+=imageformat png (plugin)
-#  DEPENDS+=+qt5base-core +qt5base-gui +libpng
-#endef
+define Package/qt5base-plugin-imageformats-png
+  $(call Package/qt5base/Default)
+  TITLE+=imageformat png (plugin)
+  DEPENDS+=+qt5base-core +qt5base-gui +libpng
+endef
 
 ####### platforms
-
-#define Package/qt5base-plugin-platforms-eglfs
-#  $(call Package/qt5base/Default)
-#  TITLE+=platform eglfs (plugin)
-#  DEPENDS+=+qt5base-core +qt5base-gui +libfreetype +fontconfig
-#endef
-
-#define Package/qt5base-plugin-platforms-minimalegl
-#  $(call Package/qt5base/Default)
-#  TITLE+=platform minimalegl (plugin)
-#  DEPENDS+=+qt5base-core +qt5base-gui +libfreetype +fontconfig
-#endef
 
 define Package/qt5base-plugin-platforms-linuxfb
   $(call Package/qt5base/Default)
   TITLE+=platform linuxfb (plugin)
-  DEPENDS+=+qt5base-core +qt5base-gui +libfreetype +fontconfig +libudev +PACKAGE_libdrm:libdrm +PACKAGE_qt5base-plugin-input-libinput:libinput
+  DEPENDS+=+qt5base-core +qt5base-gui +libfreetype +fontconfig +libudev +PACKAGE_libdrm:libdrm +PACKAGE_qt5base-plugin-input-libinput:libinput +PACKAGE_qt5base-plugin-input-tslib:tslib +PACKAGE_qt5base-dbus:qt5base-dbus
 endef
 
 define Package/qt5base-plugin-platforms-minimal
@@ -249,27 +244,21 @@ define Package/qt5base-plugin-platforms-offscreen
   DEPENDS+=+qt5base-core +qt5base-gui +libfreetype +fontconfig
 endef
 
-define Package/qt5base-plugin-platforms-wayland
-  $(call Package/qt5base/Default)
-  TITLE+=platform wayland (plugin)
-  DEPENDS+=+qt5base-core +qt5base-gui +qt5base-wayland @BROKEN
-endef
-
 define Package/qt5base-plugin-platforms-vnc
   $(call Package/qt5base/Default)
   TITLE+=platform vnc (plugin)
-  DEPENDS+=+qt5base-core +qt5base-gui +qt5base-network +libfreetype +fontconfig +libudev +PACKAGE_qt5base-plugin-input-libinput:libinput
+  DEPENDS+=+qt5base-core +qt5base-gui +qt5base-network +libfreetype +fontconfig +libudev +PACKAGE_qt5base-plugin-input-libinput:libinput +PACKAGE_qt5base-plugin-input-tslib:tslib +PACKAGE_qt5base-dbus:qt5base-dbus
 endef
 
 
 
 ###### sql
 
-#define Package/qt5base-plugin-sqldrivers-sqlite
-#  $(call Package/qt5base/Default)
-#  TITLE+=sqldriver sqlite (plugin)
-#  DEPENDS+=+qt5base-core +qt5base-sql +libsqlite3
-#endef
+define Package/qt5base-plugin-sqldrivers-sqlite
+  $(call Package/qt5base/Default)
+  TITLE+=sqldriver sqlite (plugin)
+  DEPENDS+=+qt5base-core +qt5base-sql +libsqlite3
+endef
 
 define Package/qt5base-examples
   $(call Package/qt5base/Default)
@@ -277,10 +266,12 @@ define Package/qt5base-examples
   DEPENDS+=\
 		+qt5base-core \
 		+qt5base-gui \
+		+qt5base-test \
 		+qt5base-widgets \
 		+qt5base-network \
 		+qt5base-sql \
 		+qt5base-xml \
+		+qt5base-dbus \
 		+qt5base-printSupport \
 		+qt5base-concurrent \
 		+qt5base-gl
@@ -292,10 +283,6 @@ define Build/Prepare
 		./files/mkspecs/linux-openwrt-g++ \
 		$(PKG_BUILD_DIR)/mkspecs/
 endef
-
-# TARGET_CFLAGS += \
-# 	  -I$(STAGING_DIR)/usr/include/freetype2 \
-# 	  -I$(STAGING_DIR)/usr/include/libdrm
 
 define Build/Configure
 	# CROSS/TARGET_* need to be passed to configure, in order to use cross-compiling tools to check for requirements.
@@ -355,7 +342,7 @@ define Build/Configure
 			$(if $(CONFIG_PACKAGE_libdrm),-kms,-no-kms) \
 			--gui=$(if $(CONFIG_PACKAGE_qt5base-gui),yes,no) \
 			--widgets=$(if $(CONFIG_PACKAGE_qt5base-widgets),yes,no) \
-			--dbus=no \
+			--dbus=$(if $(CONFIG_PACKAGE_qt5base-dbus),yes,no) \
 			--accessibility=yes \
 			--glib=no \
 			--eventfd=no \
@@ -375,7 +362,7 @@ define Build/Configure
 			--freetype=system \
 			--harfbuzz=no \
 			--gtk=no \
-			--opengl=$(if $(CONFIG_PACKAGE_qt5base-gl),yes,) \
+			--opengl=$(if $(CONFIG_PACKAGE_qt5base-gl),yes,no) \
 			--opengles3=no \
 			--egl=no \
 			--xcb-xlib=no \
@@ -390,7 +377,7 @@ define Build/Configure
 			--evdev=yes \
 			--libinput=$(if $(CONFIG_PACKAGE_qt5base-plugin-input-libinput),yes,no) \
 			--mtdev=no \
-			--tslib=no \
+			--tslib=$(if $(CONFIG_PACKAGE_qt5base-plugin-input-tslib),yes,no) \
 			--bundled-xcb-xinput=no \
 			--xkbcommon=no \
 			--gif=$(if $(CONFIG_PACKAGE_qt5base-gui),yes,no) \
@@ -403,10 +390,10 @@ define Build/Configure
 			--sql-oci=no \
 			--sql-odbc=no \
 			--sql-psql=no \
-			--sql-sqlite=no \
+			--sql-sqlite=$(if $(CONFIG_PACKAGE_qt5base-plugin-sqldrivers-sqlite),yes,no) \
 			--sql-sqlite2=no \
 			--sql-tds=no \
-			--sqlite=no \
+			--sqlite=$(if $(CONFIG_PACKAGE_qt5base-plugin-sqldrivers-sqlite),yes,no) \
 	)
 endef
 
@@ -553,11 +540,6 @@ define Package/qt5base-gl/install
 	$(call Build/Install/Libs,$(1),libQt5OpenGL)
 endef
 
-define Package/qt5base-wayland/install
-	$(call Build/Install/Libs,$(1),libQt5WaylandClient)
-	$(call Build/Install/Libs,$(1),libQt5WaylandCompositor)
-endef
-
 define Package/qt5base-gui/install
 	$(call Build/Install/Libs,$(1),libQt5Gui)
 endef
@@ -586,12 +568,20 @@ define Package/qt5base-xml/install
 	$(call Build/Install/Libs,$(1),libQt5Xml)
 endef
 
+define Package/qt5base-dbus/install
+	$(call Build/Install/Libs,$(1),libQt5DBus)
+endef
+
 define Package/qt5base-plugin-bearer-generic/install
 	$(call Build/Install/Plugins,$(1),bearer,libqgenericbearer)
 endef
 
 define Package/qt5base-plugin-input-libinput/install
 	$(call Build/Install/Plugins,$(1),generic,libqlibinputplugin)
+endef
+
+define Package/qt5base-plugin-input-tslib/install
+	$(call Build/Install/Plugins,$(1),generic,libqtslibplugin)
 endef
 
 define Package/qt5base-plugin-input-evdevkeyboard/install
@@ -610,9 +600,9 @@ define Package/qt5base-plugin-input-evdevtouch/install
 	$(call Build/Install/Plugins,$(1),generic,libqevdevtouchplugin)
 endef
 
-#define Package/qt5base-plugin-imageformats-gif/install
-#	$(call Build/Install/Plugins,$(1),imageformats,libqgif)
-#endef
+define Package/qt5base-plugin-imageformats-gif/install
+	$(call Build/Install/Plugins,$(1),imageformats,libqgif)
+endef
 
 define Package/qt5base-plugin-imageformats-ico/install
 	$(call Build/Install/Plugins,$(1),imageformats,libqico)
@@ -622,9 +612,9 @@ define Package/qt5base-plugin-imageformats-jpeg/install
 	$(call Build/Install/Plugins,$(1),imageformats,libqjpeg)
 endef
 
-#define Package/qt5base-plugin-imageformats-png/install
-#	$(call Build/Install/Plugins,$(1),imageformats,libqpng)
-#endef
+define Package/qt5base-plugin-imageformats-png/install
+	$(call Build/Install/Plugins,$(1),imageformats,libqpng)
+endef
 
 define Package/qt5base-plugin-platforms-linuxfb/install
 	$(call Build/Install/Plugins,$(1),platforms,libqlinuxfb)
@@ -634,18 +624,6 @@ define Package/qt5base-plugin-platforms-vnc/install
 	$(call Build/Install/Plugins,$(1),platforms,libqvnc)
 endef
 
-define Package/qt5base-plugin-platforms-wayland/install
-	$(call Build/Install/Plugins,$(1),platforms,libqwayland-generic)
-endef
-
-#define Package/qt5base-plugin-platforms-eglfs/install
-#	$(call Build/Install/Plugins,$(1),platforms,libqeglfs)
-#endef
-
-#define Package/qt5base-plugin-platforms-minimalegl/install
-#	$(call Build/Install/Plugins,$(1),platforms,libqminimalegl)
-#endef
-
 define Package/qt5base-plugin-platforms-minimal/install
 	$(call Build/Install/Plugins,$(1),platforms,libqminimal)
 endef
@@ -654,9 +632,9 @@ define Package/qt5base-plugin-platforms-offscreen/install
 	$(call Build/Install/Plugins,$(1),platforms,libqoffscreen)
 endef
 
-#define Package/qt5base-plugin-sqldrivers-sqlite/install
-#	$(call Build/Install/Plugins,$(1),sqldrivers,libqsqlite)
-#endef
+define Package/qt5base-plugin-sqldrivers-sqlite/install
+	$(call Build/Install/Plugins,$(1),sqldrivers,libqsqlite)
+endef
 
 define Package/qt5base-examples/install
 	$(call Build/Install/Examples,$(1))
@@ -666,30 +644,28 @@ $(eval $(call BuildPackage,qt5base-concurrent))
 $(eval $(call BuildPackage,qt5base-core))
 $(eval $(call BuildPackage,qt5base-gui))
 $(eval $(call BuildPackage,qt5base-gl))
-$(eval $(call BuildPackage,qt5base-wayland))
 $(eval $(call BuildPackage,qt5base-network))
 $(eval $(call BuildPackage,qt5base-printSupport))
 $(eval $(call BuildPackage,qt5base-sql))
 $(eval $(call BuildPackage,qt5base-test))
 $(eval $(call BuildPackage,qt5base-widgets))
 $(eval $(call BuildPackage,qt5base-xml))
+$(eval $(call BuildPackage,qt5base-dbus))
 $(eval $(call BuildPackage,qt5base-plugin-bearer-generic))
 $(eval $(call BuildPackage,qt5base-plugin-input-libinput))
+$(eval $(call BuildPackage,qt5base-plugin-input-tslib))
 $(eval $(call BuildPackage,qt5base-plugin-input-evdevkeyboard))
 $(eval $(call BuildPackage,qt5base-plugin-input-evdevmouse))
 $(eval $(call BuildPackage,qt5base-plugin-input-evdevtablet))
 $(eval $(call BuildPackage,qt5base-plugin-input-evdevtouch))
-#$(eval $(call BuildPackage,qt5base-plugin-imageformats-gif))
+$(eval $(call BuildPackage,qt5base-plugin-imageformats-gif))
 $(eval $(call BuildPackage,qt5base-plugin-imageformats-ico))
 $(eval $(call BuildPackage,qt5base-plugin-imageformats-jpeg))
-#$(eval $(call BuildPackage,qt5base-plugin-imageformats-png))
+$(eval $(call BuildPackage,qt5base-plugin-imageformats-png))
 $(eval $(call BuildPackage,qt5base-plugin-platforms-linuxfb))
-#$(eval $(call BuildPackage,qt5base-plugin-platforms-eglfs))
-#$(eval $(call BuildPackage,qt5base-plugin-platforms-minimalegl))
 $(eval $(call BuildPackage,qt5base-plugin-platforms-minimal))
 $(eval $(call BuildPackage,qt5base-plugin-platforms-offscreen))
 $(eval $(call BuildPackage,qt5base-plugin-platforms-vnc))
-$(eval $(call BuildPackage,qt5base-plugin-platforms-wayland))
-#$(eval $(call BuildPackage,qt5base-plugin-sqldrivers-sqlite))
+$(eval $(call BuildPackage,qt5base-plugin-sqldrivers-sqlite))
 $(eval $(call BuildPackage,qt5base-examples))
 $(eval $(call HostBuild))
