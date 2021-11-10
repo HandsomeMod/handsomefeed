@@ -205,7 +205,7 @@ endif
 
 platforms := x11
 
-ifdef CONFIG_PACKAGE_wayland
+ifeq ($(CONFIG_PACKAGE_wayland),y)
     MESON_ARGS += -Dwayland-scanner-path=$(STAGING_DIR_HOSTPKG)/bin/wayland-scanner
     platforms := x11,wayland
 endif
