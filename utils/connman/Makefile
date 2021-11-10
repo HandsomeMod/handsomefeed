@@ -9,12 +9,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=connman
-PKG_VERSION:=1.38
+PKG_VERSION:=1.40
 PKG_RELEASE:=1
 
 
 PKG_SOURCE_URL:=https://www.kernel.org/pub/linux/network/connman/
-PKG_HASH:= cb30aca97c2f79ccaed8802aa2909ac5100a3969de74c0af8a9d73b85fc4932b
+PKG_HASH:= 1a57ae7ce234aa3a1744aac3be5c2121d98dce999440ef8ab9cc4edfd5edcb12
 PKG_SOURCE_SUBDIR:=connman-$(PKG_VERSION)
 PKG_SOURCE:=connman-$(PKG_VERSION).tar.xz
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_SOURCE_SUBDIR)
@@ -57,7 +57,6 @@ CONFIGURE_ARGS +=  \
 
 
 define Build/InstallDev
-#	$(MAKE) install
 	$(INSTALL_DIR) $(1)/usr/include/connman
 	$(CP) $(PKG_INSTALL_DIR)/usr/include/connman/*.h $(1)/usr/include/connman
 	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
@@ -67,10 +66,13 @@ endef
 define Package/$(PKG_NAME)/install
 	#init.d 
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(CP) ./files/connman.init $(1)/etc/init.d/connman
+	$(INSTALL_BIN) ./files/connman.init $(1)/etc/init.d/connman
 	#config
 	$(INSTALL_DIR) $(1)/etc/connman
 	$(CP) $(PKG_BUILD_DIR)/src/main.conf $(1)/etc/connman
+	#dbus policy
+	$(INSTALL_DIR) $(1)/etc/dbus-1/system.d/
+	$(CP) $(PKG_INSTALL_DIR)/etc/dbus-1/system.d/*.conf $(1)/etc/dbus-1/system.d/
        	#main program
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(CP) $(PKG_INSTALL_DIR)/usr/bin/connmanctl $(1)/usr/bin/
