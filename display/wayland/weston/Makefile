@@ -30,13 +30,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=weston
-PKG_VERSION:=8.0.0
-PKG_RELEASE:=3
+PKG_VERSION:=9.0.0
+PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_URL:=http://wayland.freedesktop.org/releases
-PKG_MD5SUM:=53e4810d852df0601d01fd986a5b22b3
+PKG_HASH:=5cf5d6ce192e0eb15c1fc861a436bf21b5bb3b91dbdabbdebe83e1f83aa098fe
 PKG_BUILD_DEPENDS:=meson/host wayland/host
 PKG_FIXUP:=autoreconf
 PKG_BUILD_PARALLEL:=0
@@ -78,9 +78,8 @@ MESON_ARGS += \
 	-Dbackend-rdp=false \
 	-Dimage-webp=true \
 	-Dcolor-management-lcms=false \
+	-Dsimple-clients=dmabuf-v4l \
 	-Dpipewire=false \
-	-Drenderer-gl=true \
-	-Dsimple-dmabuf-drm=auto \
 	-Dxwayland=false
 
 TARGET_LDFLAGS+= -ludev 
@@ -117,7 +116,7 @@ LDFLAGS += -lGLESv2
 TARGET_LDFLAGS += -lGLESv2
 MESON_ARGS += -Drenderer-gl=true
 else
-MESON_ARGS += -Drenderer-gl=false 
+MESON_ARGS += -Drenderer-gl=false
 endif
 
 ifeq ($(CONFIG_WESTON_FBDEV),y)
@@ -158,7 +157,7 @@ endef
 
 define Package/weston/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_DIR) $(1)/usr/lib/libweston-8
+	$(INSTALL_DIR) $(1)/usr/lib/libweston-9
 	$(INSTALL_DIR) $(1)/usr/lib/weston
 	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
 	$(INSTALL_DIR) $(1)/usr/bin
@@ -167,7 +166,7 @@ define Package/weston/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_DIR) $(1)/usr/libexec
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/*.so* $(1)/usr/lib/
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libweston-8/*.so* $(1)/usr/lib/libweston-8/
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libweston-9/*.so* $(1)/usr/lib/libweston-9/
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/weston/*.so* $(1)/usr/lib/weston/
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libweston-* $(1)/usr/lib/
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/* $(1)/usr/lib/pkgconfig
