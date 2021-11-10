@@ -29,7 +29,9 @@ include $(INCLUDE_DIR)/package.mk
 define Package/gtk3
   SECTION:=libs
   CATEGORY:=Libraries
-  DEPENDS:=+wayland +wayland-protocols +libxkbcommon +libxmu +libxaw +libxpm +libtiff +zlib \
+  DEPENDS:=+PACKAGE_wayland:wayland +PACKAGE_wayland-protocols:wayland-protocols +PACKAGE_libxkbcommon:libxkbcommon \
+	    +PACKAGE_libx11:libx11 +PACKAGE_libxau:libxau +PACKAGE_libxext:libxext +PACKAGE_libxi:libxi \
+	    +libxmu +libxaw +libxpm +libtiff +zlib \
 	    +libexpat +pango +libxrandr +libxinerama +libxfixes +libxdamage \
 	    +libepoxy +libcairo +atk +gdk-pixbuf +libxcomposite +libxcursor \
 		+hicolor-icon-theme +shared-mime-info
@@ -44,9 +46,23 @@ MAKE_FLAGS+= \
 
 TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed
 
+ifeq ($(CONFIG_PACKAGE_wayland),y)
+    CONFIGURE_ARGS += --enable-wayland-backend
+else
+    CONFIGURE_ARGS += --disable-wayland-backend
+endif
+
+ifeq ($(CONFIG_PACKAGE_xorg-server),y)
+    CONFIGURE_ARGS += \
+    	--enable-x11-backend \
+    	--x-includes=$(STAGING_DIR)/usr/include/X11 \
+    	--x-libraries=$(STAGING_DIR)/usr/lib
+else
+    CONFIGURE_ARGS += --disable-x11-backend
+endif
+
 CONFIGURE_ARGS += \
   --prefix=/usr \
-  --enable-wayland-backend \
   --enable-explicit-deps=no \
   --disable-doc \
   --disable-docs \
@@ -61,7 +77,6 @@ CONFIGURE_ARGS += \
   --disable-papi \
   --disable-cups \
   --disable-glibtest \
-  --disable-x11-backend \
   --enable-xdamage \
   --enable-xcomposite \
   --enable-xrandr \
