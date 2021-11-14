@@ -57,7 +57,6 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_qt5base-plugin-platforms-minimal \
 	CONFIG_PACKAGE_qt5base-plugin-platforms-linuxfb \
 	CONFIG_PACKAGE_qt5base-plugin-input-libinput
-#	CONFIG_PACKAGE_qt5base-plugin-imageformats-png
 
 # Do not use sstrip for QT5. When sstrip is used the QT5 plugin loading does
 # not work, because of QT''s internal elf parser, see
@@ -218,11 +217,6 @@ define Package/qt5base-plugin-imageformats-jpeg
   DEPENDS+=+qt5base-core +qt5base-gui +libjpeg
 endef
 
-define Package/qt5base-plugin-imageformats-png
-  $(call Package/qt5base/Default)
-  TITLE+=imageformat png (plugin)
-  DEPENDS+=+qt5base-core +qt5base-gui +libpng
-endef
 
 ####### platforms
 
@@ -500,6 +494,7 @@ define Build/InstallDev
 	$(call Build/Install/HostFiles,$(1))
 	$(call Build/Install/Headers,$(1))
 	$(call Build/Install/Libs,$(1),*)
+	$(call Build/Install/StaticLibs,$(1),*)
 endef
 
 define Host/Install
@@ -612,9 +607,6 @@ define Package/qt5base-plugin-imageformats-jpeg/install
 	$(call Build/Install/Plugins,$(1),imageformats,libqjpeg)
 endef
 
-define Package/qt5base-plugin-imageformats-png/install
-	$(call Build/Install/Plugins,$(1),imageformats,libqpng)
-endef
 
 define Package/qt5base-plugin-platforms-linuxfb/install
 	$(call Build/Install/Plugins,$(1),platforms,libqlinuxfb)
@@ -661,7 +653,6 @@ $(eval $(call BuildPackage,qt5base-plugin-input-evdevtouch))
 $(eval $(call BuildPackage,qt5base-plugin-imageformats-gif))
 $(eval $(call BuildPackage,qt5base-plugin-imageformats-ico))
 $(eval $(call BuildPackage,qt5base-plugin-imageformats-jpeg))
-$(eval $(call BuildPackage,qt5base-plugin-imageformats-png))
 $(eval $(call BuildPackage,qt5base-plugin-platforms-linuxfb))
 $(eval $(call BuildPackage,qt5base-plugin-platforms-minimal))
 $(eval $(call BuildPackage,qt5base-plugin-platforms-offscreen))

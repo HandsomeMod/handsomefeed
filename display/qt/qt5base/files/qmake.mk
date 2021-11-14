@@ -163,6 +163,15 @@ define Build/Install/Libs
 		$(1)/$(QT_INSTALL_LIBS)/
 endef
 
+define Build/Install/StaticLibs
+	$(INSTALL_DIR) \
+		$(1)/$(QT_INSTALL_LIBS)
+
+	$(CP) \
+		$(PKG_INSTALL_DIR)/$(QT_INSTALL_LIBS)/$(2).a \
+		$(1)/$(QT_INSTALL_LIBS)/
+endef
+
 define Build/Install/Translations
 	$(INSTALL_DIR) \
 		$(1)/$(QT_INSTALL_TRANSLATIONS)
