@@ -11,4 +11,8 @@ ATTRS{rpmsg_name}!="modem|hexagon", GOTO="qcom_rpmsg_end"
 ACTION=="add", RUN+="/usr/sbin/rpmsgexport /dev/$name DATA5_CNTL"
 ACTION=="add", RUN+="/usr/sbin/rpmsgexport /dev/$name DATA4"
 
+# HACK: reset uci network when modem is ready.
+ACTION=="add", RUN+="/etc/init.d/network restart"
+
+
 LABEL="qcom_rpmsg_end"
