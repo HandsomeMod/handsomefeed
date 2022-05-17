@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2020-2021 HandsomeMod Project
+# Copyright (C) 2020-2022 HandsomeMod Project
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -42,22 +42,22 @@ $(call Package/$(PKG_NAME)/default)
 endef
 
 define Build/Compile
-
 	$(MAKE) -C $(PKG_BUILD_DIR) \
 		$(TARGET_CONFIGURE_OPTS) \
 		TARGET=Linux \
 		CFLAGS="$(TARGET_CFLAGS) $(TARGET_CPPFLAGS)" \
 		LDFLAGS="$(TARGET_LDFLAGS)" \
 		-f $(PKG_BUILD_DIR)/adbd.mk
-
 endef
 
 define Package/$(PKG_NAME)-adbd/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/adbd $(1)/usr/bin/
 	$(INSTALL_BIN) ./files/adbd.init $(1)/etc/init.d/adbd
 	$(INSTALL_DATA) ./files/adb_profile $(1)/etc/
+	$(INSTALL_DATA) ./files/adb_disable $(1)/etc/uci-defaults
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)-adbd))
