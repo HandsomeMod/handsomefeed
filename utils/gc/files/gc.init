@@ -1,0 +1,75 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2020-2022 HandsomeMod Project
+
+START=20
+STOP=30
+
+USE_PROCD=1
+PROG=/usr/bin/gc
+CONFIGFS=/sys/kernel/config/configfs
+ADBD_INIT=/etc/init.d/adbd
+
+start_service() {
+ 	enable=$(uci get gc.config.enabled 2>/dev/null)
+ 	adb=$(uci get gc.config.adb 2>/dev/null)
+ 	rndis=$(uci get gc.config.rndis 2>/dev/null)
+ 	mass=$(uci get gc.config.mass 2>/dev/null)
+ 	mass_path=$(uci get gc.config.mass_path 2>/dev/null)
+ 	serial=$(uci get gc.config.serial 2>/dev/null)
+ 	hid=$(uci get gc.config.hid 2>/dev/null)
+ 	ecm=$(uci get gc.config.ecm 2>/dev/null)
+ 	acm=$(uci get gc.config.acm 2>/dev/null)
+ 	printer=$(uci get gc.config.printer 2>/dev/null)
+ 	midi=$(uci get gc.config.midi 2>/dev/null)
+	if [ $enable -eq 1 ]; then
+		if [ ! -d $CONFIGFS ]; then
+			mount -t configfs none /sys/kernel/config
+		fi
+		gc -c
+		if [ $rndis -eq 1 ]; then
+			gc -a rndis
+		fi
+		if [ $serial -eq 1 ]; then
+			gc -a serial
+		fi
+		if [ $hid -eq 1 ]; then
+			gc -a hid
+		fi
+		if [ $ecm -eq 1 ]; then
+			gc -a ecm
+		fi
+		if [ $acm -eq 1 ]; then
+			gc -a acm
+		fi
+		if [ $printer -eq 1 ]; then
+			gc -a printer
+		fi
+		if [ $midi -eq 1 ]; then
+			gc -a midi
+		fi
+		if [ $mass -eq 1 ]; then
+			gc -a mass $mass_path
+		fi
+		if [ $adb -eq 1 ]; then
+			gc -a ffs
+			mkdir -p /dev/usb-ffs/adb
+			mount -t functionfs adb /dev/usb-ffs/adb
+			# adbd won't start it self
+			if [ -e $ADBD_INIT ]; then
+				/etc/init.d/adbd start
+			fi
+			# wait until it is up
+			sleep 2
+		fi
+		gc -e
+	fi
+}
+
+stop_service() {
+	gc -c
+}
+
+restart(){
+	  stop
+	  start
+}

@@ -1,0 +1,26 @@
+From 29f4a10ca44890d7cb61949b73a91c8f22eaa877 Mon Sep 17 00:00:00 2001
+From: HandsomeYingyan <handsomeyingyan@gmail.com>
+Date: Tue, 17 May 2022 12:22:40 +0800
+Subject: [PATCH] HACK: force ffs named adb
+
+---
+ gc_ffs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/gc_ffs.c b/gc_ffs.c
+index 2ad078f..19d6e24 100644
+--- a/gc_ffs.c
++++ b/gc_ffs.c
+@@ -24,7 +24,8 @@ int gc_ffs_create(int argc,char *argv[],gc_generic_info info)
+     usbg_function *f_ffs;
+     int usbg_ret;
+ 
+-    char *id = gc_generate_id(USBG_F_FFS);
++    /*HACK : need for adbd*/
++    char *id = "adb";
+ 
+     if(id == NULL)
+         return GC_FAILED;
+-- 
+2.36.1
+
