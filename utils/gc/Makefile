@@ -28,7 +28,7 @@ define Package/gc
   SECTION:=utils
   CATEGORY:=Utilities
   TITLE:= Usb Gadget Manager
-  DEPENDS:= +libusbgx
+  DEPENDS:= +libusbgx +android-tools-adbd
 endef
 
 define Package/gc/install
