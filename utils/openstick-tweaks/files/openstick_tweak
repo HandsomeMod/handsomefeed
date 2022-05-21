@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# Copyright (c) 2020-2022 HandsomeMod Project
+#
+# This file is licensed under the terms of the GNU General Public
+# License version 2. This program is licensed "as is" without any
+# warranty of any kind, whether express or implied.
+
+# bind usb0 to br-lan 
+uci del_list network.@device[0].ports='usb0'
+uci add_list network.@device[0].ports='usb0'
+# create modem interface
+uci set network.modem=interface
+uci set network.modem.proto='modemmanager'
+uci set network.modem.device='qcom-soc'
+uci set network.modem.auth='none'
+uci set network.modem.iptype='ipv4v6'
+uci del_list firewall.@zone[1].network='modem'
+uci add_list firewall.@zone[1].network='modem'
+uci commit
+/etc/init.d/network restart
+
+# HACK : restart network to find modem after reboot
+echo 'sleep 25 && /etc/init.d/network restart' > /etc/rc.local
