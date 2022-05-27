@@ -22,3 +22,5 @@ uci commit
 
 # HACK : restart network to find modem after reboot
 echo 'sleep 25 && /etc/init.d/network restart' > /etc/rc.local
+
+opkg remove openstick-tweaks
