@@ -6,9 +6,10 @@
 # License version 2. This program is licensed "as is" without any
 # warranty of any kind, whether express or implied.
 
-local rootsize=$(df -m | grep '^/dev/root' | awk '{print $2}')
-# Resize when lower than 200
-if [ ${rootsize} -lt 200 ] ; then
-   resize2fs /dev/root
-   sync
-fi
+rootpart=$(findmnt -n -o SOURCE /)
+mount -o ro,remount /
+fsck.ext4 -yDf ${rootpart} > /dev/null
+mount -o rw,remount /
+resize2fs ${rootpart} > /dev/null
+
+opkg remove rootfs-resizer
